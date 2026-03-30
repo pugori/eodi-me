@@ -82,7 +82,7 @@
     "updater": {
       "active": true,
       "dialog": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IENGQkI1Q0M1RDZDQTBENzYKUldSMkRjcld4Vnk3ejc4WFR1QnkydHBUWnJuKzIvTHlGbUR4RVloNFNBQlMwTGJFNXNXK3ZpLzEK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IERFODJGM0Y3NTM0RjI0NkIKUldSckpFOVQ5L09DM25WWTlRZ09maVBZamppbnlEVjlWdm9FbTcySjNCYUFrTWdvYTFBS212a3cK",
       "endpoints": [
         "https://github.com/eodi-me/app/releases/latest/download/latest.json"
       ]
