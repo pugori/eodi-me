@@ -1,0 +1,184 @@
+# ============================================================================
+# eodi.me — Full-Stack Production Deployment
+#
+# Usage:
+#   1. cp .env.example .env && edit .env (set secrets, domain)
+#   2. Place hexagons.edbh in ./data/
+#   3. docker compose up -d
+#   4. Access: http://localhost:8000/health
+#
+# Profiles:
+#   docker compose --profile https up -d      # Enable Caddy TLS
+#   docker compose --profile monitoring up -d  # Enable Prometheus/Grafana
+# ============================================================================
+
+services:
+  # ── Rust Vector Search Engine ──────────────────────────────────────────────
+  engine:
+    image: eodi-engine:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.engine
+    container_name: eodi-engine
+    restart: unless-stopped
+    environment:
+      ENGINE_API_KEY: "${ENGINE_API_KEY:?ENGINE_API_KEY must be set — run: openssl rand -hex 32}"
+      ENGINE_PLAN: "${ENGINE_PLAN:-pro}"
+    volumes:
+      - ./data:/data:ro
+      - engine-overlays:/overlays
+    command: >
+      /app/eodi-engine
+      /data/hexagons.edbh
+      --bind=0.0.0.0
+      --port=7557
+      --api-key=${ENGINE_API_KEY}
+      --plan=${ENGINE_PLAN:-pro}
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 3G
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:7557/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - eodi-net
+
+  # ── Go REST API Server ─────────────────────────────────────────────────────
+  api:
+    build:
+      context: ./go-api
+      dockerfile: Dockerfile
+    image: eodi-api:latest
+    container_name: eodi-api
+    restart: unless-stopped
+    ports:
+      - "${SERVER_PORT:-8000}:8000"
+    environment:
+      SERVER_HOST: "0.0.0.0"
+      SERVER_PORT: "8000"
+      GIN_MODE: "${GIN_MODE:-release}"
+      JWT_SECRET: "${JWT_SECRET:?JWT_SECRET must be set}"
+      TOKEN_EXPIRY: "${TOKEN_EXPIRY:-24h}"
+      RATE_LIMIT_RPS: "${RATE_LIMIT_RPS:-10}"
+      RATE_LIMIT_BURST: "${RATE_LIMIT_BURST:-30}"
+      ALLOW_ORIGIN: "${ALLOW_ORIGIN:?ALLOW_ORIGIN must be set — e.g. https://yourdomain.com}"
+      LOG_LEVEL: "${LOG_LEVEL:-info}"
+      LOG_FORMAT: "${LOG_FORMAT:-json}"
+      DB_PATH: "/data/vibe_data.db"
+      HEX_DB_PATH: "/data/hexagons.edbh"
+      ENGINE_URL: "http://engine:7557"
+    volumes:
+      - ./data:/data:ro
+    depends_on:
+      engine:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
+        reservations:
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    networks:
+      - eodi-net
+
+  # ── Caddy HTTPS Reverse Proxy (optional) ───────────────────────────────────
+  caddy:
+    image: caddy:2-alpine
+    container_name: eodi-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: "${DOMAIN:?DOMAIN must be set — e.g. api.eodi.me}"
+    volumes:
+      - ./config/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - api
+    networks:
+      - eodi-net
+    profiles:
+      - https
+
+  # ── Prometheus (optional) ──────────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:v3.2.1
+    container_name: eodi-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/alerts:/etc/prometheus/rules:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=30d'
+    depends_on:
+      - api
+    networks:
+      - eodi-net
+    profiles:
+      - monitoring
+
+  # ── Grafana (optional) ─────────────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:11.5.2
+    container_name: eodi-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD must be set}"
+    volumes:
+      - ./config/grafana:/etc/grafana/provisioning:ro
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - eodi-net
+    profiles:
+      - monitoring
+
+  # ── Alertmanager (optional) ────────────────────────────────────────────────
+  alertmanager:
+    image: prom/alertmanager:v0.28.1
+    container_name: eodi-alertmanager
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    depends_on:
+      - prometheus
+    networks:
+      - eodi-net
+    profiles:
+      - monitoring
+
+networks:
+  eodi-net:
+    driver: bridge
+
+volumes:
+  engine-overlays:
+  caddy-data:
+  caddy-config:
+  prometheus-data:
+  grafana-data:

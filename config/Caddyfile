@@ -1,0 +1,30 @@
+# eodi.me — Caddy HTTPS reverse proxy
+#
+# Domain is set via DOMAIN environment variable in .env
+# Caddy auto-obtains and renews Let's Encrypt TLS certificates.
+#
+# Usage: docker compose --profile https up
+
+{$DOMAIN:localhost} {
+    # Forward all requests to the Go API
+    reverse_proxy api:8000
+
+    # Security headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        # Remove server fingerprinting
+        -Server
+    }
+
+    # Access log
+    log {
+        output stdout
+        format json
+    }
+}

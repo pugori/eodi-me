@@ -1,0 +1,138 @@
+{
+  "title": "eodi.me Overview",
+  "uid": "eodi-overview",
+  "version": 1,
+  "schemaVersion": 37,
+  "refresh": "30s",
+  "time": { "from": "now-1h", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Request Rate (req/s)",
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 },
+      "targets": [{
+        "expr": "rate(http_requests_total{job=\"eodi-api\"}[1m])",
+        "legendFormat": "req/s",
+        "datasource": { "type": "prometheus", "uid": "prometheus" }
+      }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" },
+      "fieldConfig": { "defaults": { "unit": "reqps", "thresholds": { "steps": [
+        { "color": "green", "value": null },
+        { "color": "yellow", "value": 50 },
+        { "color": "red", "value": 200 }
+      ]}}}
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "P99 Latency (ms)",
+      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 },
+      "targets": [{
+        "expr": "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{job=\"eodi-api\"}[5m])) * 1000",
+        "legendFormat": "p99",
+        "datasource": { "type": "prometheus", "uid": "prometheus" }
+      }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" },
+      "fieldConfig": { "defaults": { "unit": "ms", "thresholds": { "steps": [
+        { "color": "green", "value": null },
+        { "color": "yellow", "value": 200 },
+        { "color": "red", "value": 1000 }
+      ]}}}
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Error Rate (%)",
+      "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 },
+      "targets": [{
+        "expr": "rate(http_requests_total{job=\"eodi-api\",status=~\"5..\"}[5m]) / rate(http_requests_total{job=\"eodi-api\"}[5m]) * 100",
+        "legendFormat": "errors",
+        "datasource": { "type": "prometheus", "uid": "prometheus" }
+      }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" },
+      "fieldConfig": { "defaults": { "unit": "percent", "thresholds": { "steps": [
+        { "color": "green", "value": null },
+        { "color": "yellow", "value": 1 },
+        { "color": "red", "value": 5 }
+      ]}}}
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Goroutines",
+      "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 },
+      "targets": [{
+        "expr": "go_goroutines{job=\"eodi-api\"}",
+        "legendFormat": "goroutines",
+        "datasource": { "type": "prometheus", "uid": "prometheus" }
+      }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value" },
+      "fieldConfig": { "defaults": { "unit": "short", "thresholds": { "steps": [
+        { "color": "green", "value": null },
+        { "color": "yellow", "value": 500 },
+        { "color": "red", "value": 2000 }
+      ]}}}
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "HTTP Request Rate by Endpoint",
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+      "targets": [{
+        "expr": "topk(10, rate(http_requests_total{job=\"eodi-api\"}[1m]))",
+        "legendFormat": "{{handler}} {{method}}",
+        "datasource": { "type": "prometheus", "uid": "prometheus" }
+      }],
+      "fieldConfig": { "defaults": { "unit": "reqps" } }
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Latency Percentiles",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket{job=\"eodi-api\"}[5m])) * 1000",
+          "legendFormat": "p50",
+          "datasource": { "type": "prometheus", "uid": "prometheus" }
+        },
+        {
+          "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=\"eodi-api\"}[5m])) * 1000",
+          "legendFormat": "p95",
+          "datasource": { "type": "prometheus", "uid": "prometheus" }
+        },
+        {
+          "expr": "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{job=\"eodi-api\"}[5m])) * 1000",
+          "legendFormat": "p99",
+          "datasource": { "type": "prometheus", "uid": "prometheus" }
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Memory Usage",
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+      "targets": [{
+        "expr": "go_memstats_alloc_bytes{job=\"eodi-api\"}",
+        "legendFormat": "heap alloc",
+        "datasource": { "type": "prometheus", "uid": "prometheus" }
+      }],
+      "fieldConfig": { "defaults": { "unit": "bytes" } }
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Engine Search Latency",
+      "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
+      "targets": [{
+        "expr": "histogram_quantile(0.99, rate(engine_search_duration_seconds_bucket[5m])) * 1000",
+        "legendFormat": "p99 search",
+        "datasource": { "type": "prometheus", "uid": "prometheus" }
+      }],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    }
+  ]
+}

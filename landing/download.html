@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Download eodi.me</title>
+  <meta name="description" content="Download eodi.me — explore neighborhood vibes offline on Windows." />
+  <link rel="canonical" href="https://eodi.me/download" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <!-- hreflang -->
+  <link rel="alternate" hreflang="en" href="https://eodi.me/download" />
+  <link rel="alternate" hreflang="x-default" href="https://eodi.me/download" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080e1a;
+      --surface: #0d1525;
+      --border: rgba(100,150,255,0.12);
+      --text: #e8eef8;
+      --text2: #8da0be;
+      --text3: #4a5d7a;
+      --accent: #6496ff;
+      --accent2: #34d399;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6; min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 56px;
+      background: rgba(8,14,26,0.85); backdrop-filter: blur(20px);
+      border-bottom: 0.5px solid var(--border);
+    }
+    .nav-logo { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+    .nav-links a { font-size: 13px; color: var(--text2); transition: color .15s; }
+    .nav-links a:hover { color: var(--text); }
+
+    /* MAIN */
+    main {
+      flex: 1;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center;
+      padding: 80px 2rem;
+      background: radial-gradient(ellipse 800px 500px at 50% 0%, rgba(100,150,255,0.07) 0%, transparent 70%);
+    }
+
+    .dl-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+      color: var(--accent2); text-transform: uppercase;
+      background: rgba(52,211,153,0.1); border: 0.5px solid rgba(52,211,153,0.25);
+      border-radius: 20px; padding: 4px 12px; margin-bottom: 28px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800; letter-spacing: -0.03em;
+      line-height: 1.15; text-align: center; margin-bottom: 16px;
+    }
+
+    .subtitle {
+      font-size: 17px; color: var(--text2); text-align: center;
+      max-width: 520px; margin-bottom: 56px;
+    }
+
+    /* PLATFORM CARDS */
+    .dl-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px; width: 100%; max-width: 520px;
+      margin-bottom: 48px;
+    }
+
+    .dl-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 12px;
+      transition: border-color .2s, transform .2s;
+    }
+    .dl-card:hover { border-color: rgba(100,150,255,0.35); transform: translateY(-2px); }
+
+    .dl-icon { font-size: 40px; line-height: 1; }
+
+    .dl-platform {
+      font-size: 18px; font-weight: 700; letter-spacing: -0.01em;
+    }
+
+    .dl-note {
+      font-size: 12px; color: var(--text3); text-align: center;
+    }
+
+    .dl-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 13.5px; font-weight: 600;
+      padding: 10px 22px; border-radius: 24px;
+      background: rgba(100,150,255,0.14); color: var(--accent);
+      border: 0.5px solid rgba(100,150,255,0.3);
+      transition: background .15s, transform .1s;
+      cursor: pointer;
+    }
+    .dl-btn:hover { background: rgba(100,150,255,0.24); transform: scale(1.02); }
+    .dl-btn.primary {
+      background: var(--accent); color: #080e1a;
+      border-color: transparent;
+    }
+    .dl-btn.primary:hover { background: #7aabff; }
+
+    /* RELEASE NOTES LINK */
+    .release-link {
+      font-size: 13px; color: var(--text3);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .release-link a { color: var(--accent); }
+    .release-link a:hover { text-decoration: underline; }
+
+    /* CHECKSUMS NOTE */
+    .checksum-note {
+      margin-top: 40px;
+      background: var(--surface); border: 0.5px solid var(--border);
+      border-radius: 12px; padding: 16px 20px;
+      max-width: 680px; width: 100%;
+      font-size: 12.5px; color: var(--text2);
+    }
+    .checksum-note strong { color: var(--text); }
+
+    /* SYSTEM REQS */
+    .reqs {
+      margin-top: 24px;
+      max-width: 680px; width: 100%;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 560px) { .reqs { grid-template-columns: 1fr; } }
+
+    .req-card {
+      background: var(--surface); border: 0.5px solid var(--border);
+      border-radius: 12px; padding: 16px 18px;
+      font-size: 13px; color: var(--text2);
+    }
+    .req-card h3 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .req-card li { list-style: none; padding: 2px 0; }
+    .req-card li::before { content: "· "; color: var(--text3); }
+
+    /* FOOTER */
+    footer {
+      text-align: center; padding: 28px 2rem;
+      border-top: 0.5px solid var(--border);
+      font-size: 12px; color: var(--text3);
+    }
+    footer a { color: var(--text2); }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<!-- MAINTENANCE BANNER -->
+<div style="background:rgba(248,113,113,0.12);border-bottom:0.5px solid rgba(248,113,113,0.3);color:#fca5a5;font-size:12.5px;font-weight:500;text-align:center;padding:10px 2rem;">
+  🔧 <strong style="color:#f87171;">Temporary maintenance:</strong> Downloads are temporarily unavailable while we update the app data. We'll be back shortly — thank you for your patience!
+</div>
+
+<nav>
+  <a class="nav-logo" href="/">eodi<span>.</span>me</a>
+  <div class="nav-links">
+    <a href="/#features">Features</a>
+    <a href="/#pricing">Pricing</a>
+    <a href="mailto:hello@eodi.me">Support</a>
+  </div>
+</nav>
+
+<main>
+  <div class="dl-badge">
+    <span>⬇</span> Free Download
+  </div>
+
+  <h1>Download eodi.me</h1>
+  <p class="subtitle">
+    Feel the vibe of any neighborhood — runs entirely on your device.
+    No account required for the free tier.
+  </p>
+
+  <div class="dl-grid">
+    <!-- Windows -->
+    <div class="dl-card">
+      <div class="dl-icon">🪟</div>
+      <div class="dl-platform">Windows</div>
+      <div class="dl-note">Windows 10 / 11 (64-bit)<br />Installer (.exe) · ~3 MB</div>
+      <a class="dl-btn"
+         href="#"
+         id="btn-win"
+         onclick="return false;"
+         style="pointer-events:none;opacity:0.35;cursor:not-allowed;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.3);border-color:rgba(255,255,255,0.1);">
+        🔧 Temporarily Unavailable
+      </a>
+    </div>
+  </div>
+
+  <div class="release-link">
+    <span>All releases &amp; changelogs:</span>
+    <a href="https://github.com/eodi-me/app/releases" target="_blank" rel="noopener">
+      github.com/eodi-me/app/releases ↗
+    </a>
+  </div>
+
+  <div class="checksum-note">
+    <strong>Security note:</strong> SHA-256 checksums are published alongside each release on GitHub.
+    Verify your download before running: <code>certutil -hashfile eodi-me-setup.exe SHA256</code> (Windows).
+  </div>
+
+  <div class="reqs">
+    <div class="req-card" style="grid-column: 1 / -1;">
+      <h3>🪟 Windows requirements</h3>
+      <ul>
+        <li>Windows 10 version 1903 or later (64-bit)</li>
+        <li>4 GB RAM minimum, 8 GB recommended</li>
+        <li>500 MB free disk space (+ ~2 GB for data)</li>
+        <li>WebView2 Runtime (installed automatically)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top: 24px; padding: 14px 20px; background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; max-width: 520px; width: 100%; font-size: 13px; color: var(--text2); text-align: center;">
+    🍎 <strong style="color: var(--text);">macOS</strong> — Coming Soon
+  </div>
+</main>
+
+<footer>
+  <p>
+    <a href="/">eodi.me</a> &nbsp;·&nbsp;
+    <a href="/#pricing">Pricing</a> &nbsp;·&nbsp;
+    <a href="privacy.html">Privacy</a> &nbsp;·&nbsp;
+    <a href="terms.html">Terms</a> &nbsp;·&nbsp;
+    <a href="mailto:hello@eodi.me">Support</a>
+  </p>
+  <p style="margin-top: 8px;">© 2026 eodi.me</p>
+</footer>
+
+<script>
+  // Fetch latest release from GitHub API and set direct download link
+  (function () {
+    fetch('https://api.github.com/repos/eodi-me/app/releases/latest')
+      .then(function(r) { return r.json(); })
+      .then(function(release) {
+        var btn = document.getElementById('btn-win');
+        if (!btn || !release.assets) return;
+        // Prefer NSIS setup.exe, fallback to MSI
+        var asset = release.assets.find(function(a) { return a.name.endsWith('-setup.exe'); })
+                 || release.assets.find(function(a) { return a.name.endsWith('.msi'); });
+        if (asset) {
+          btn.href = asset.browser_download_url;
+          // Update size label
+          var note = btn.closest('.dl-card').querySelector('.dl-note');
+          if (note) {
+            var mb = (asset.size / 1024 / 1024).toFixed(1);
+            note.innerHTML = 'Windows 10 / 11 (64-bit)<br />Installer (.exe) &middot; ~' + mb + ' MB';
+          }
+        }
+        // Update release version badge if element exists
+        var ver = document.getElementById('release-version');
+        if (ver && release.tag_name) ver.textContent = release.tag_name;
+      })
+      .catch(function() { /* fallback: button already points to /releases/latest */ });
+
+    // Auto-detect OS
+    var ua = navigator.userAgent;
+    if (!/Windows/.test(ua)) {
+      var winBtn = document.getElementById('btn-win');
+      if (winBtn) winBtn.classList.remove('primary');
+    }
+  })();
+</script>
+
+</body>
+</html>

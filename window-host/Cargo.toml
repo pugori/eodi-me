@@ -1,0 +1,18 @@
+[package]
+name = "eodi-window"
+version = "0.1.0"
+edition = "2021"
+description = "Embedded WebView2 window host for eodi.me"
+
+[[bin]]
+name = "eodi-window"
+
+[dependencies]
+tao = "0.34"
+wry = "0.54"
+
+[profile.release]
+strip = true
+lto = true
+opt-level = "s"
+codegen-units = 1

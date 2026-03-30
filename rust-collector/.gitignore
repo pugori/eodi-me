@@ -1,0 +1,30 @@
+# Rust build artifacts
+/target/
+
+# Runtime data
+/output/
+/state/
+
+# Local databases and encrypted artifacts
+*.db
+*.duckdb
+*.edb
+*.edbh
+
+# Temporary checkpoints
+*.raw_stage2
+*.ckpt
+*.hex_poi_ckpt
+*.poi_ckpt
+*.poi_ckpt.ts
+*.tmp
+
+# Generated config (use config.example.toml as template)
+config.toml
+
+# Secrets / keys
+secrets/
+
+# Local tooling
+/.idea/
+/.vscode/

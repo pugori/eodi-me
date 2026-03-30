@@ -1,0 +1,40 @@
+[package]
+name = "eodi-shell"
+version = "1.0.1"
+description = "eodi.me — Neighborhood Vibe Intelligence"
+authors = ["EODI.ME"]
+license = "Proprietary"
+repository = ""
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+tauri-build = { version = "1.5", features = [] }
+
+[dependencies]
+tauri = { version = "1.5", features = ["shell-open", "system-tray", "process-command-api", "process-exit", "process-relaunch", "updater"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.35", features = ["full"] }
+reqwest = { version = "0.11", features = ["json", "blocking"] }
+rand = "0.8"
+base64 = "0.21"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+thiserror = "1.0"
+anyhow = "1.0"
+hmac = "0.12"
+sha2 = "0.10"
+chrono = { version = "0.4", features = ["serde"] }
+
+[features]
+# This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
+custom-protocol = ["tauri/custom-protocol"]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"

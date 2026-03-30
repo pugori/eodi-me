@@ -1,0 +1,47 @@
+{
+  "name": "eodi-me-shell",
+  "version": "1.0.0",
+  "description": "City Vibe Engine - Tauri Desktop Shell",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "tauri:build:windows": "tauri build --target x86_64-pc-windows-msvc",
+    "lint": "eslint src --ext js,jsx,ts,tsx"
+  },
+  "dependencies": {
+    "@deck.gl/core": "^9.2.10",
+    "@deck.gl/geo-layers": "^9.2.10",
+    "@deck.gl/layers": "^9.2.10",
+    "@deck.gl/mapbox": "^9.2.10",
+    "@tauri-apps/api": "^1.5.3",
+    "axios": "^1.6.7",
+    "framer-motion": "^11.0.0",
+    "h3-js": "^4.1.0",
+    "lucide-react": "^0.358.0",
+    "maplibre-gl": "^5.19.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recharts": "^2.10.3",
+    "zustand": "^4.5.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^1.5.9",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.18",
+    "eslint": "^8.56.0",
+    "playwright": "^1.58.2",
+    "postcss": "^8.4.35",
+    "puppeteer": "^24.38.0",
+    "rollup-plugin-obfuscator": "^1.1.0",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.1.0"
+  }
+}

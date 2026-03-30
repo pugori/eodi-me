@@ -1,0 +1,91 @@
+name: Upload DB Files
+
+# Triggered manually when new database files need to be published.
+# The DB files (~200 MB) are built locally by the rust-collector and are
+# too large and too slow to rebuild in CI on every release.
+#
+# Usage:
+#   gh workflow run db-release.yml -f tag=v1.0.0
+#   OR: GitHub UI → Actions → "Upload DB Files" → Run workflow
+#
+# Prerequisites:
+#   1. Build DB files locally: cd rust-collector && cargo run --release -- build-full
+#   2. Create the GitHub Release first (via release.yml or manually)
+#   3. Upload the DB files as artifacts to this workflow run, OR
+#      have them available via a previous release to copy from.
+#
+# NOTE: Because DB files are built locally (not in CI), this workflow expects
+# the caller to upload the built files as workflow artifacts before the upload
+# step runs, OR uses the manual "upload via script" approach instead.
+# For most cases, running scripts/upload-db-release.ps1 locally is simpler.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to upload DB files to (e.g. v1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  upload-db:
+    name: Upload DB Files to Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check release exists
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release view "${{ inputs.tag }}" || {
+            echo "ERROR: Release '${{ inputs.tag }}' not found. Create it first."
+            exit 1
+          }
+
+      - name: Download DB files from latest passing build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: db-files
+          path: output/
+        continue-on-error: true
+
+      - name: Check DB files are present
+        run: |
+          for f in hexagons.edbh hexagons.edbh.adm cities.edb; do
+            if [ ! -f "output/$f" ]; then
+              echo "ERROR: output/$f not found."
+              echo "Build DB files locally and upload as artifact named 'db-files', or use scripts/upload-db-release.ps1."
+              exit 1
+            fi
+          done
+          echo "All DB files present."
+          ls -lh output/*.edb output/*.edbh output/*.adm 2>/dev/null || true
+
+      - name: Compute SHA-256 manifest
+        run: |
+          cd output
+          python3 -c "
+          import json, hashlib, os
+          files = ['hexagons.edbh', 'hexagons.edbh.adm', 'cities.edb']
+          manifest = {}
+          for f in files:
+              with open(f, 'rb') as fh:
+                  h = hashlib.sha256(fh.read()).hexdigest()
+              manifest[f] = {'sha256': h, 'size': os.path.getsize(f)}
+          with open('db-manifest.json', 'w') as out:
+              json.dump(manifest, out, indent=2)
+          print(json.dumps(manifest, indent=2))
+          "
+
+      - name: Upload DB files to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for f in output/hexagons.edbh output/hexagons.edbh.adm output/cities.edb output/db-manifest.json; do
+            echo "Uploading $f..."
+            gh release upload "${{ inputs.tag }}" "$f" --clobber
+          done
+          echo "All DB files uploaded to release ${{ inputs.tag }}"

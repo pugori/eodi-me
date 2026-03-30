@@ -1,0 +1,623 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * EODI.ME Design System v6 — "macOS Spatial Intelligence"
+ *
+ * Follows Apple Human Interface Guidelines (macOS Dark Mode):
+ * - Deep navy-tinted dark background — premium 2025 SaaS aesthetic
+ * - System accent blue #4F6EF7
+ * - Vibrancy materials with heavy blur + saturation
+ * - SF Pro typography with -apple-system fallback
+ * - WCAG 2.1 AA contrast ratios maintained
+ */
+
+:root {
+  /* ── Background hierarchy — pure dark for CARTO Dark Matter map alignment ── */
+  --color-bg:        #0e0e0e;   /* Matches CARTO Dark Matter background — seamless map edges */
+  --color-surface:   #161618;   /* Surface 1 */
+  --color-surface-2: #1E1E22;   /* Surface 2 */
+  --color-surface-3: #28282E;   /* Surface 3 */
+  --color-surface-4: #38383F;   /* Surface 4 */
+
+  /* ── Borders — macOS separator colors ──────────────────────────────────── */
+  --color-border:        rgba(255, 255, 255, 0.06);
+  --color-border-2:      rgba(255, 255, 255, 0.12);
+  --color-border-strong: rgba(255, 255, 255, 0.22);
+  --color-border-focus:  rgba(74, 150, 255, 0.60);
+
+  /* ── Text — macOS label colors ─────────────────────────────────────────── */
+  --color-text:        rgba(255, 255, 255, 0.85);   /* label */
+  --color-text-2:      rgba(235, 235, 245, 0.60);   /* secondaryLabel */
+  --color-text-3:      rgba(235, 235, 245, 0.70);   /* tertiaryLabel */
+  --color-text-muted:  rgba(235, 235, 245, 0.70);
+  --color-text-subtle: rgba(235, 235, 245, 0.70);
+
+  /* ── Accent — aligned with eodi.me vibe palette (urban blue) ─────────── */
+  --color-accent:       #4A96FF;
+  --color-accent-light: #72B0FF;
+  --color-accent-dim:   rgba(74, 150, 255, 0.16);
+  --color-indigo:       #4A96FF;
+  --color-indigo-light: #72B0FF;
+
+  /* ── Border focus ring updated to match new accent ──────────────────── */
+
+  /* ── Status colors — Scientific/Medical Grade ───────────────────────────── */
+  --color-green:  #00CF95;
+  --color-amber:  #FFB000;
+  --color-red:    #FF5F4A;
+  --color-purple: #D375C6;
+  --color-teal:   #4AC2F2;
+  --color-blue:   #2E91E5;
+
+  /* ── Extended score palette — 2025 6-step scientific gradient ─────────────── */
+  --score-exceptional: #00E5A0;  /* Emerald ≥88 */
+  --score-excellent:   #30D158;  /* Green  ≥72 */
+  --score-good:        #FFD60A;  /* Gold   ≥55 */
+  --score-fair:        #FF9F0A;  /* Orange ≥40 */
+  --score-low:         #FF5F5F;  /* Coral  ≥25 */
+  --score-none:        #71717A;  /* Zinc   <25 */
+
+  /* ── Border radius — macOS continuous corners ──────────────────────────── */
+  --radius-xl:    20px;
+  --radius-lg:    14px;
+  --radius-md:    10px;
+  --radius-sm:    8px;
+  --radius-xs:    6px;
+  --radius-panel: 14px;
+  --radius-card:  10px;
+  --radius-input: 8px;
+
+  /* ── Blur — macOS vibrancy materials ────────────────────────────────────── */
+  --blur-heavy: 80px;
+  --blur-panel: 60px;
+  --blur-card:  30px;
+  --blur-light: 16px;
+
+  /* ── Shadows — macOS window / popover shadows ──────────────────────────── */
+  --shadow-1: 0 1px 3px rgba(0,0,0,0.25),
+              0 0 0 0.5px rgba(255,255,255,0.05) inset;
+  --shadow-2: 0 4px 16px rgba(0,0,0,0.35),
+              0 1px 4px rgba(0,0,0,0.20),
+              0 0 0 0.5px rgba(255,255,255,0.06) inset;
+  --shadow-3: 0 24px 80px rgba(0,0,0,0.50),
+              0 8px 24px rgba(0,0,0,0.28),
+              0 0 0 0.5px rgba(255,255,255,0.07) inset;
+  --shadow-panel: var(--shadow-3);
+  --shadow-card:  var(--shadow-2);
+  --shadow-float: var(--shadow-3);
+
+  /* ── Z-index scale — centralized to prevent collisions ─────────────────── */
+  --z-map:       0;     /* Map canvas layer */
+  --z-tooltip:   100;   /* Map hover tooltip */
+  --z-dropdown:  200;   /* Dropdown menus, suggestions */
+  --z-sidebar:   500;   /* Sidebar panel */
+  --z-toast:     600;   /* Error/notification toasts */
+  --z-banner:    700;   /* VDB loading & picking banners */
+  --z-modal:     900;   /* Standard modals (Help) */
+  --z-modal-top: 1000;  /* Top-priority modals (Settings, License) */
+  --z-overlay:   1500;  /* Full-screen overlays (Compare) */
+  --z-onboarding:2000;  /* Onboarding tutorial */
+  --z-whats-new: 2100;  /* What's New (above onboarding) */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@layer utilities {
+  /* ── Entrance animations — Apple spring physics ─────────────────────────── */
+  .animate-fade-in {
+    animation: fade-in 0.18s cubic-bezier(0.2, 0, 0, 1) forwards;
+  }
+  .animate-scale-in {
+    animation: scale-in 0.26s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+  }
+  .animate-fade-in-up {
+    animation: fade-in-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .animate-slide-in-right {
+    animation: slide-in-right 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  /* ── Stagger helpers ────────────────────────────────────────────────────── */
+  .stagger-1 { animation-delay: 0.03s; }
+  .stagger-2 { animation-delay: 0.06s; }
+  .stagger-3 { animation-delay: 0.09s; }
+  .stagger-4 { animation-delay: 0.12s; }
+  .stagger-5 { animation-delay: 0.15s; }
+
+  /* ── Frosted glass panels — macOS vibrancy on pure dark canvas ───────────── */
+  .glass-panel {
+    background: rgba(22, 22, 24, 0.78);
+    backdrop-filter: blur(60px) saturate(200%);
+    -webkit-backdrop-filter: blur(60px) saturate(200%);
+    border: 0.5px solid rgba(255, 255, 255, 0.13);
+  }
+  .glass-card {
+    background: rgba(28, 28, 30, 0.80);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 0.5px solid rgba(255, 255, 255, 0.10);
+    border-radius: var(--radius-md);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.28), 0 0 0 0.5px rgba(255,255,255,0.05) inset;
+  }
+  .glass-card:hover {
+    transform: translateY(-1px);
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  }
+
+  /* Vibe bar fill animation on mount */
+  @keyframes vibe-fill {
+    from { width: 0%; opacity: 0; }
+    to { opacity: 1; }
+  }
+  .vibe-bar {
+    animation: vibe-fill 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  /* Score ring enhanced glow on high scores */
+  .score-ring-glow {
+    filter: drop-shadow(0 0 12px currentColor);
+  }
+
+  /* ── Scrollbars — macOS overlay scrollbar style ──────────────────────────── */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 3px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.30);
+  }
+
+  /* ── Scroll shadow — top/bottom fade hints ───────────────────────────── */
+  .scroll-shadow {
+    position: relative;
+  }
+  .scroll-shadow::before,
+  .scroll-shadow::after {
+    content: '';
+    position: sticky;
+    display: block;
+    height: 16px;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .scroll-shadow::before {
+    top: 0;
+    background: linear-gradient(to bottom, var(--color-bg), transparent);
+  }
+  .scroll-shadow::after {
+    bottom: 0;
+    background: linear-gradient(to top, var(--color-bg), transparent);
+  }
+
+  /* ── Gradient text utilities ─────────────────────────────────────────────── */
+  .text-gradient-indigo {
+    background: linear-gradient(135deg, #7B93FF, #A5B8FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .text-gradient-white {
+    background: linear-gradient(150deg, rgba(255,255,255,0.90), rgba(255,255,255,0.58));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Button: Primary ─────────────────────────────────────────────────────── */
+  /* Fitts's Law: min 40px height for primary actions */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 18px;
+    min-height: 40px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 590;
+    letter-spacing: -0.012em;
+    color: #fff;
+    background: var(--color-accent);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.14) inset,
+                0 3px 12px rgba(79,110,247,0.36);
+    transition: filter 0.12s ease, transform 0.10s cubic-bezier(0.2,0,0,1);
+    cursor: pointer;
+    border: none;
+    outline: none;
+  }
+  .btn-primary:hover  { filter: brightness(1.10); }
+  .btn-primary:active { transform: scale(0.97); filter: brightness(0.95); }
+  .btn-primary:disabled { opacity: 0.28; cursor: not-allowed; filter: none; transform: none; }
+
+  /* ── Button: Ghost/Glass ──────────────────────────────────────────────────── */
+  .btn-glass {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 14px;
+    min-height: 36px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-2);
+    background: rgba(255, 255, 255, 0.06);
+    border: 0.5px solid var(--color-border-2);
+    transition: all 0.14s cubic-bezier(0.2, 0, 0, 1);
+    cursor: pointer;
+    outline: none;
+  }
+  .btn-glass:hover  { background: rgba(255,255,255,0.15); color: var(--color-text); border-color: var(--color-border-strong); }
+  .btn-glass:active { transform: scale(0.97); }
+
+  /* ── Input ───────────────────────────────────────────────────────────────── */
+  .input-glass {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.07);
+    border: 0.5px solid var(--color-border-2);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--color-text);
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .input-glass:focus {
+    border-color: var(--color-border-focus);
+    box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.28);
+  }
+  .input-glass::placeholder {
+    color: var(--color-text-3);
+    font-weight: 400;
+  }
+
+  /* ── Select ──────────────────────────────────────────────────────────────── */
+  select.input-glass {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.75)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+    cursor: pointer;
+    color: #ffffff;
+  }
+  select.input-glass:disabled { opacity: 0.3; cursor: not-allowed; }
+  select.input-glass option    { background: #17172A; color: #FFFFFF; }
+
+  /* ── Focus ring ──────────────────────────────────────────────────────────── */
+  /* Global default — only applies when no component-specific ring exists */
+  *:focus-visible {
+    outline: 2px solid rgba(79, 110, 247, 0.70);
+    outline-offset: 2px;
+  }
+  button:focus-visible, a:focus-visible, [role="option"]:focus-visible {
+    outline: 2px solid rgba(79, 110, 247, 0.70);
+    outline-offset: 2px;
+    border-radius: 7px;
+  }
+  /* Elements that use Tailwind focus:ring or have outline:none — suppress the global outline */
+  input:focus-visible, textarea:focus-visible, select:focus-visible {
+    outline: none; /* rely on component-level ring styles */
+  }
+
+  /* ── Rank medals ─────────────────────────────────────────────────────────── */
+  .rank-gold   { color: #FFD700; }
+  .rank-silver { color: #C0C0C0; }
+  .rank-bronze { color: #CD7F32; }
+
+  /* ── Skeleton loading — subtle shimmer ───────────────────────────────────── */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      rgba(255,255,255,0.05) 0%,
+      rgba(255,255,255,0.14) 50%,
+      rgba(255,255,255,0.05) 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.6s ease-in-out infinite;
+    border-radius: 6px;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.94) translateY(6px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);   }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-4px); }
+}
+
+@keyframes shimmer-gradient {
+  0%   { background-position: 0% 50%;   }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%;   }
+}
+
+/* ── Accessibility: respect prefers-reduced-motion ──────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display',
+    'Helvetica Neue', 'Inter var', 'Inter', 'Apple SD Gothic Neo', 'Noto Sans KR',
+    'Malgun Gothic', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  text-rendering: optimizeLegibility;
+  font-size: 15px;
+  line-height: 1.47;
+  /* Firefox scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Left Sidebar — macOS sidebar material ──────────────────────────────── */
+.app-sidebar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 264px;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  background: rgba(20, 20, 32, 0.75);
+  backdrop-filter: blur(50px) saturate(180%);
+  -webkit-backdrop-filter: blur(50px) saturate(180%);
+  border-right: 0.5px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 4px 0 40px rgba(0,0,0,0.50);
+}
+
+/* ── Right Panel — macOS inspector material ──────────────────────────────── */
+.app-right-panel {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 380px;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  background: rgba(20, 20, 32, 0.75);
+  backdrop-filter: blur(50px) saturate(180%);
+  -webkit-backdrop-filter: blur(50px) saturate(180%);
+  border-left: 0.5px solid rgba(255, 255, 255, 0.10);
+  box-shadow: -4px 0 40px rgba(0,0,0,0.50);
+  overflow: hidden;
+}
+
+/* ── Analysis Panel (inner content, no own positioning) ────────────────────── */
+.analysis-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.analysis-panel-collapsed {
+  display: none;
+}
+
+/* writing-mode for collapsed rail label */
+.writing-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* ── Color Legend ──────────────────────────────────────────────────────────── */
+/* Position: bottom-right of map canvas, left of right panel (380px wide).    */
+/* Benchmark: ESRI Business Analyst places legend bottom-right of map canvas. */
+/* Fitts's Law: toggle button min 22px, overall panel ≥ 36px touch target.   */
+.color-legend {
+  position: fixed;
+  bottom: 28px;
+  right: 396px;   /* 380px right panel + 16px margin */
+  z-index: 510;
+  padding: 10px 12px;
+  background: rgba(20, 20, 22, 0.92);
+  backdrop-filter: blur(56px) saturate(200%);
+  -webkit-backdrop-filter: blur(56px) saturate(200%);
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  min-width: 152px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.50), 0 0 0 0.5px rgba(255,255,255,0.06) inset;
+  pointer-events: none;   /* overridden inline on interactive elements */
+  transition: right 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* When sidebar is collapsed, legend stays at same right position */
+.color-legend.legend-collapsed {
+  right: 16px;
+}
+
+/* ── MapLibre GL controls — macOS dark style ─────────────────────────────── */
+.maplibregl-canvas-container canvas {
+  /* Removed aggressive filter that was killing color vibrancy (saturate 0.30) */
+  /* Ensure your map style is "Dark" or "Midnight" at the source */
+  /* filter: brightness(0.95) contrast(1.05) saturate(1.05); */
+  filter: none;
+  transition: filter 0.3s ease;
+}
+
+.maplibregl-ctrl-group {
+  background: rgba(20, 20, 22, 0.92) !important;
+  backdrop-filter: blur(28px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+  border: 0.5px solid rgba(255,255,255,0.12) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.45) !important;
+  overflow: hidden;
+}
+
+.maplibregl-ctrl-group button {
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  width: 32px !important;
+  height: 32px !important;
+  transition: background 0.12s ease, color 0.12s ease !important;
+}
+
+.maplibregl-ctrl-group button:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+.maplibregl-ctrl-group button + button {
+  border-top: 0.5px solid var(--color-border) !important;
+}
+
+.maplibregl-ctrl-zoom-in .maplibregl-ctrl-icon,
+.maplibregl-ctrl-zoom-out .maplibregl-ctrl-icon {
+  filter: invert(1) opacity(0.50);
+}
+
+.maplibregl-ctrl-zoom-in:hover .maplibregl-ctrl-icon,
+.maplibregl-ctrl-zoom-out:hover .maplibregl-ctrl-icon {
+  filter: invert(1) opacity(0.88);
+}
+
+.maplibregl-ctrl-attrib {
+  background: rgba(22, 22, 34, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  border-radius: 8px !important;
+  border: 0.5px solid var(--color-border) !important;
+}
+
+/* ── Vibe weight sliders — macOS style ──────────────────────────────────────── */
+/* Track height: 6px (Apple HIG slider spec) */
+input[type="range"].vibe-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  transition: height 0.15s ease;
+}
+
+/* ── Accessibility: high contrast mode support ──────────────────────────── */
+@media (prefers-contrast: more) {
+  :root {
+    --color-border:        rgba(255, 255, 255, 0.28);
+    --color-border-2:      rgba(255, 255, 255, 0.45);
+    --color-border-strong: rgba(255, 255, 255, 0.70);
+    --color-text:          rgba(255, 255, 255, 1.00);
+    --color-text-2:        rgba(235, 235, 245, 0.92);
+    --color-text-3:        rgba(235, 235, 245, 0.85);
+    --color-text-muted:    rgba(235, 235, 245, 0.80);
+    --color-text-subtle:   rgba(235, 235, 245, 0.80);
+  }
+  .glass-panel {
+    background: rgba(14, 14, 22, 0.97);
+    border-width: 1px;
+  }
+  [class*='skeleton-'] {
+    opacity: 0.4;
+  }
+}
+input[type="range"].vibe-slider:hover {
+  height: 7px;
+}
+input[type="range"].vibe-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  /* 20px thumb: Fitts's Law — adequate target size */
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2.5px solid var(--thumb-color, rgba(255,255,255,0.5));
+  box-shadow:
+    0 1px 4px rgba(0,0,0,0.48),
+    0 0 0 2.5px rgba(0,0,0,0.18);
+  cursor: pointer;
+  transition: transform 0.12s cubic-bezier(0.2,0,0,1);
+}
+input[type="range"].vibe-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.18);
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.55),
+    0 0 0 3px rgba(255,255,255,0.12);
+}
+input[type="range"].vibe-slider::-webkit-slider-runnable-track {
+  border-radius: 4px;
+}
+input[type="range"].vibe-slider:active::-webkit-slider-thumb {
+  transform: scale(1.08);
+}
+
+/* ── Result card hover ───────────────────────────────────────────────────────── */
+li[role="option"]:not([aria-selected="true"]):hover {
+  background: rgba(26, 26, 40, 0.92) !important;
+  border-color: rgba(255,255,255,0.15) !important;
+}
+li[role="option"][aria-selected="true"] {
+  box-shadow: 0 2px 12px rgba(0,0,16,0.36), 0 0 0 0.5px rgba(59,130,246,0.12) inset !important;
+}
+li[role="option"] {
+  transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease !important;
+}
+
+.maplibregl-ctrl-attrib a {
+  color: rgba(255, 255, 255, 0.35) !important;
+  font-size: 10px !important;
+}
+.maplibregl-ctrl-attrib a:hover {
+  color: rgba(255, 255, 255, 0.60) !important;
+}
+
+/* MapLibre controls: keep above sidebar left, clear right panel */
+.maplibregl-ctrl-bottom-right {
+  right: 20px !important;
+  bottom: 20px !important;
+}

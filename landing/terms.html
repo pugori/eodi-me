@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service · eodi.me</title>
+  <meta name="description" content="eodi.me Terms of Service — usage rules and license agreement." />
+  <link rel="canonical" href="https://eodi.me/terms" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0d0f14;
+      --surface: #161a22;
+      --border:  #232838;
+      --text1:   #e8eaf0;
+      --text2:   #9ba3b8;
+      --text3:   #5c6478;
+      --accent:  #6c8cff;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text1);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px clamp(16px, 5vw, 80px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 100;
+    }
+    .logo { font-weight: 700; font-size: 18px; color: var(--text1); text-decoration: none; }
+    .nav-links a { color: var(--text2); text-decoration: none; font-size: 14px; }
+    .nav-links a:hover { color: var(--text1); }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: clamp(40px, 8vw, 80px) clamp(16px, 5vw, 40px);
+    }
+
+    h1 { font-size: clamp(24px, 4vw, 36px); font-weight: 700; margin-bottom: 8px; }
+    .meta { color: var(--text3); font-size: 13px; margin-bottom: 48px; }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-top: 40px;
+      margin-bottom: 12px;
+      color: var(--text1);
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    p { margin-bottom: 14px; color: var(--text2); }
+    ul { margin: 0 0 14px 20px; }
+    ul li { color: var(--text2); margin-bottom: 6px; }
+    ol { margin: 0 0 14px 20px; }
+    ol li { color: var(--text2); margin-bottom: 6px; }
+    strong { color: var(--text1); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .plan-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+    .plan-table th {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--border);
+      color: var(--text1);
+      font-weight: 600;
+    }
+    .plan-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text2);
+    }
+
+    .warning-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid #ff6b6b;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 24px 0;
+    }
+    .warning-box p { margin: 0; }
+
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      border-top: 1px solid var(--border);
+      color: var(--text3);
+      font-size: 13px;
+      margin-top: 80px;
+    }
+    footer a { color: var(--text2); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">eodi.me</a>
+  <div class="nav-links">
+    <a href="/">← Back to Home</a>
+  </div>
+</nav>
+
+<main>
+  <h1>Terms of Service</h1>
+  <p class="meta">Effective date: March 2026 &nbsp;·&nbsp; Last updated: March 2026</p>
+
+  <p>Please read these Terms of Service ("Terms") carefully before using eodi.me. By downloading, installing, or using eodi.me, you agree to be bound by these Terms. If you do not agree, do not use the software.</p>
+
+  <h2>1. Definitions</h2>
+  <ul>
+    <li><strong>"eodi.me"</strong> — the desktop application, self-hosted Docker image, REST API, and associated services provided by us.</li>
+    <li><strong>"We / us / our"</strong> — the eodi.me team.</li>
+    <li><strong>"You / user"</strong> — the individual or entity accessing or using eodi.me.</li>
+    <li><strong>"License key"</strong> — a unique activation code that unlocks paid plan features.</li>
+    <li><strong>"Hexagon database"</strong> — the encrypted geospatial vector dataset distributed with eodi.me.</li>
+  </ul>
+
+  <h2>2. License Grant</h2>
+  <p>Subject to these Terms and payment of applicable fees, we grant you a <strong>non-exclusive, non-transferable, revocable</strong> license to:</p>
+  <ul>
+    <li>Install and use eodi.me on the number of devices permitted by your plan (see §3)</li>
+    <li>Access the hexagon database for personal or business analysis purposes</li>
+    <li>Use the local REST API (Business and Enterprise plans) to integrate with your own tools</li>
+  </ul>
+  <p>This license does not include any right to resell, sublicense, or redistribute eodi.me or the hexagon database.</p>
+
+  <h2>3. Plans and Seat Limits</h2>
+  <table class="plan-table">
+    <thead>
+      <tr>
+        <th>Plan</th>
+        <th>Devices</th>
+        <th>Commercial Use</th>
+        <th>Self-hosted API</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Free</td><td>1</td><td>Personal only</td><td>No</td></tr>
+      <tr><td>Personal</td><td>2</td><td>Personal only</td><td>No</td></tr>
+      <tr><td>Solo Biz</td><td>2</td><td>Yes (1 business)</td><td>No</td></tr>
+      <tr><td>Business</td><td>5</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Enterprise</td><td>Unlimited</td><td>Yes</td><td>Yes (unlimited)</td></tr>
+    </tbody>
+  </table>
+  <p>A "device" is a single physical or virtual machine with a unique activation. You may deactivate a device and reactivate on another device at any time.</p>
+
+  <h2>4. Prohibited Uses</h2>
+  <p>You may not:</p>
+  <ul>
+    <li>Reverse-engineer, decompile, or attempt to extract the source code of the engine binary or hexagon database encryption</li>
+    <li>Share, resell, or publicly distribute the hexagon database files (<code>.edbh</code>) or decrypted vector data</li>
+    <li>Use eodi.me to build a competing geospatial data product or database</li>
+    <li>Attempt to bypass, defeat, or circumvent the license activation system</li>
+    <li>Use the Free plan for commercial purposes (internal or external)</li>
+    <li>Use automated scraping or bulk extraction of the hexagon database beyond normal application use</li>
+    <li>Violate any applicable law or regulation</li>
+  </ul>
+
+  <h2>5. Subscriptions and Billing</h2>
+  <p>Paid plans are billed monthly or annually in advance. Billing is handled by <strong>LemonSqueezy</strong>. By subscribing, you also agree to LemonSqueezy's <a href="https://www.lemonsqueezy.com/terms" target="_blank" rel="noopener">Terms of Service</a>.</p>
+  <ul>
+    <li><strong>Auto-renewal:</strong> Subscriptions renew automatically unless cancelled before the renewal date.</li>
+    <li><strong>Cancellation:</strong> You may cancel at any time through your LemonSqueezy customer portal. Access continues until the end of the current billing period.</li>
+    <li><strong>Refunds:</strong> We offer a <strong>14-day money-back guarantee</strong> for new subscriptions. Contact <a href="mailto:hello@eodi.me">hello@eodi.me</a> within 14 days of purchase. No refunds are issued after this period or for renewals.</li>
+    <li><strong>Price changes:</strong> We will provide at least 30 days' notice via email before changing subscription prices.</li>
+  </ul>
+
+  <h2>6. Data Updates</h2>
+  <p>Active subscribers receive periodic updates to the hexagon database (new cities, refreshed POI data). Updates are distributed as new database files. We do not guarantee a specific update frequency but aim to release significant updates at least quarterly.</p>
+  <p>Data update access ends when your subscription expires. You retain access to the last downloaded database version after cancellation.</p>
+
+  <h2>7. Bring-Your-Own-Data (BYOD)</h2>
+  <p>Business and Enterprise plans allow you to import custom POI datasets. You represent that:</p>
+  <ul>
+    <li>You own or have the right to use any data you import</li>
+    <li>Your imported data does not violate any third-party intellectual property rights</li>
+    <li>Your imported data complies with applicable privacy laws</li>
+  </ul>
+  <p>We are not responsible for the accuracy or legality of user-imported data.</p>
+
+  <h2>8. Self-Hosted Deployments</h2>
+  <p>Business and Enterprise plans include the right to run eodi.me in a self-hosted Docker environment. You are responsible for:</p>
+  <ul>
+    <li>Securing access to your self-hosted instance (network firewall, API key management)</li>
+    <li>Keeping the Docker image updated</li>
+    <li>Compliance with applicable data protection laws in your jurisdiction</li>
+  </ul>
+  <p>Self-hosted instances may only serve your organization. You may not provide eodi.me as a service to third parties without an Enterprise agreement.</p>
+
+  <h2>9. Intellectual Property</h2>
+  <p>eodi.me, its engine, the hexagon database, and all associated intellectual property are owned by us. These Terms do not transfer any ownership rights to you.</p>
+  <p>Map data used within eodi.me is derived from <strong>OpenStreetMap</strong> contributors, licensed under the <a href="https://opendatacommons.org/licenses/odbl/" target="_blank" rel="noopener">ODbL</a>. See <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">openstreetmap.org/copyright</a>.</p>
+
+  <h2>10. Disclaimer of Warranties</h2>
+  <div class="warning-box">
+    <p><strong>eodi.me is provided "as is" without warranties of any kind.</strong> We disclaim all warranties, express or implied, including merchantability, fitness for a particular purpose, and non-infringement. We do not warrant that the software will be error-free, that data will be accurate, or that the service will be uninterrupted.</p>
+  </div>
+  <p>eodi.me provides neighborhood analysis as an informational tool only. It is not a substitute for professional due diligence, legal advice, or site surveys. <strong>Do not rely solely on eodi.me data for significant business or financial decisions.</strong></p>
+
+  <h2>11. Limitation of Liability</h2>
+  <p>To the maximum extent permitted by law, we shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, or business opportunities, arising from your use of eodi.me, even if we have been advised of the possibility of such damages.</p>
+  <p>Our total cumulative liability to you for any claims arising under these Terms shall not exceed the amount you paid us in the 12 months preceding the claim.</p>
+
+  <h2>12. Indemnification</h2>
+  <p>You agree to indemnify and hold us harmless from any claims, losses, or damages (including legal fees) arising from your violation of these Terms or misuse of eodi.me.</p>
+
+  <h2>13. Termination</h2>
+  <p>We may terminate or suspend your license immediately, without notice, if you:</p>
+  <ul>
+    <li>Violate any provision of these Terms</li>
+    <li>Engage in fraud or attempt to bypass licensing</li>
+    <li>Fail to pay applicable fees after notice</li>
+  </ul>
+  <p>Upon termination, you must stop using eodi.me and delete all copies of the hexagon database from your devices. Sections 4, 9, 10, 11, 12, and 15 survive termination.</p>
+
+  <h2>14. Changes to These Terms</h2>
+  <p>We may revise these Terms from time to time. We will notify active subscribers of material changes at least 14 days in advance via email. Continued use of eodi.me after changes take effect constitutes acceptance of the revised Terms.</p>
+
+  <h2>15. Governing Law</h2>
+  <p>These Terms are governed by applicable law. Any disputes shall be resolved through good-faith negotiation before pursuing formal legal action. If negotiation fails, disputes shall be submitted to binding arbitration or the courts of competent jurisdiction.</p>
+
+  <h2>16. Contact</h2>
+  <p>For questions about these Terms: <a href="mailto:hello@eodi.me">hello@eodi.me</a></p>
+  <p>For general support: <a href="mailto:hello@eodi.me">hello@eodi.me</a></p>
+</main>
+
+<footer>
+  <p>
+    <a href="/">Home</a> &nbsp;·&nbsp;
+    <a href="/privacy">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="/terms">Terms of Service</a> &nbsp;·&nbsp;
+    <a href="mailto:hello@eodi.me">Support</a>
+  </p>
+  <p style="margin-top: 8px;">© 2026 eodi.me</p>
+</footer>

@@ -1,0 +1,88 @@
+# ============================================================================
+# eodi.me — Alertmanager Configuration
+#
+# Set these environment variables before starting:
+#   SLACK_WEBHOOK_URL   — Slack incoming webhook URL (optional)
+#   ALERT_EMAIL_TO      — Notification recipient email (optional)
+#   ALERT_EMAIL_FROM    — Sender address
+#   SMTP_HOST           — SMTP server, e.g. smtp.gmail.com:587
+#   SMTP_USER / SMTP_PASS
+#
+# Start: docker run -p 9093:9093 -v $(pwd)/monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml prom/alertmanager
+# ============================================================================
+
+global:
+  resolve_timeout: 5m
+  smtp_smarthost: "${SMTP_HOST:-smtp.gmail.com:587}"
+  smtp_from: "${ALERT_EMAIL_FROM:-alerts@eodi.me}"
+  smtp_auth_username: "${SMTP_USER}"
+  smtp_auth_password: "${SMTP_PASS}"
+  smtp_require_tls: true
+
+# ── Routing tree ──────────────────────────────────────────────────────────────
+route:
+  receiver: default
+  group_by: [alertname, severity]
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+
+  routes:
+    # Critical alerts: immediate Slack + email
+    - match:
+        severity: critical
+      receiver: critical
+      repeat_interval: 30m
+
+    # Warning alerts: Slack only
+    - match:
+        severity: warning
+      receiver: warning
+      repeat_interval: 2h
+
+# ── Receivers ────────────────────────────────────────────────────────────────
+receivers:
+  - name: default
+    slack_configs:
+      - api_url: "${SLACK_WEBHOOK_URL}"
+        channel: "#eodi-alerts"
+        send_resolved: true
+        title: "[{{ .Status | toUpper }}] {{ .GroupLabels.alertname }}"
+        text: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ .Annotations.description }}{{ end }}"
+        color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+
+  - name: critical
+    slack_configs:
+      - api_url: "${SLACK_WEBHOOK_URL}"
+        channel: "#eodi-alerts-critical"
+        send_resolved: true
+        title: "🚨 CRITICAL: {{ .GroupLabels.alertname }}"
+        text: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ .Annotations.description }}{{ end }}"
+    email_configs:
+      - to: "${ALERT_EMAIL_TO:-ops@eodi.me}"
+        subject: "[CRITICAL] eodi.me alert: {{ .GroupLabels.alertname }}"
+        body: |
+          Alert: {{ .GroupLabels.alertname }}
+          Severity: {{ .CommonLabels.severity }}
+          {{ range .Alerts }}
+          Summary: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Starts: {{ .StartsAt }}
+          {{ end }}
+
+  - name: warning
+    slack_configs:
+      - api_url: "${SLACK_WEBHOOK_URL}"
+        channel: "#eodi-alerts"
+        send_resolved: true
+        title: "⚠️ WARNING: {{ .GroupLabels.alertname }}"
+        text: "{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}"
+
+# ── Inhibition rules ─────────────────────────────────────────────────────────
+inhibit_rules:
+  # If APIServerDown is firing, suppress all other API alerts
+  - source_match:
+      alertname: APIServerDown
+    target_match_re:
+      alertname: HighErrorRate|HighLatency|HighRateLimitHits
+    equal: [job]

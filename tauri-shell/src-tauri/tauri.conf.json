@@ -1,0 +1,110 @@
+{
+  "$schema": "https://schema.tauri.app/config/1.5.0",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "devPath": "http://localhost:5173",
+    "distDir": "../dist",
+    "withGlobalTauri": false
+  },
+  "package": {
+    "productName": "eodi.me",
+    "version": "1.0.3"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "shell": {
+        "all": false,
+        "open": true
+      },
+      "notification": {
+        "all": false
+      },
+      "process": {
+        "all": false,
+        "exit": true,
+        "relaunch": true
+      }
+    },
+    "bundle": {
+      "active": true,
+      "targets": [
+        "msi",
+        "nsis",
+        "updater"
+      ],
+      "identifier": "me.eodi.cityvibe",
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ],
+      "resources": [],
+      "externalBin": [],
+      "copyright": "Copyright © 2026 EODI.ME",
+      "category": "Utility",
+      "shortDescription": "Neighborhood Vibe Intelligence",
+      "longDescription": "Discover your perfect neighborhood with 15-dimensional urban vibe analysis. Offline & private — all analysis runs locally on your machine.",
+      "deb": {
+        "depends": []
+      },
+      "macOS": {
+        "frameworks": [],
+        "minimumSystemVersion": "",
+        "exceptionDomain": "",
+        "signingIdentity": null,
+        "entitlements": null
+      },
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": "",
+        "wix": {
+          "language": "en-US"
+        },
+        "nsis": {
+          "license": null,
+          "installerIcon": "icons/icon.ico",
+          "installMode": "currentUser",
+          "languages": [
+            "English",
+            "Korean"
+          ]
+        }
+      }
+    },
+    "security": {
+      "csp": "default-src 'self'; connect-src 'self' http://127.0.0.1:* ws://127.0.0.1:* https://tiles.openfreemap.org https://*.openfreemap.org https://basemaps.cartocdn.com https://*.cartocdn.com https://*.basemaps.cartocdn.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.openfreemap.org https://*.cartocdn.com https://*.basemaps.cartocdn.com; font-src 'self' data:"
+    },
+    "updater": {
+      "active": true,
+      "dialog": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IENGQkI1Q0M1RDZDQTBENzYKUldSMkRjcld4Vnk3ejc4WFR1QnkydHBUWnJuKzIvTHlGbUR4RVloNFNBQlMwTGJFNXNXK3ZpLzEK",
+      "endpoints": [
+        "https://github.com/eodi-me/app/releases/latest/download/latest.json"
+      ]
+    },
+    "windows": [
+      {
+        "fullscreen": false,
+        "resizable": true,
+        "title": "eodi.me",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 800,
+        "minHeight": 600,
+        "center": true,
+        "decorations": true,
+        "visible": true
+      }
+    ],
+    "systemTray": {
+      "iconPath": "icons/icon.png",
+      "iconAsTemplate": true,
+      "menuOnLeftClick": false
+    }
+  }
+}

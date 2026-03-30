@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="7" fill="#080e1a"/>
+  <defs>
+    <linearGradient id="g" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6496ff"/>
+      <stop offset="1" stop-color="#34d399"/>
+    </linearGradient>
+  </defs>
+  <!-- "e." — compact wordmark, weight 900 -->
+  <text x="16" y="22" text-anchor="middle"
+        font-family="system-ui,-apple-system,sans-serif"
+        font-weight="900" font-size="17" letter-spacing="-1"
+        fill="url(#g)">e.</text>
+</svg>

@@ -1,0 +1,56 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+  external_labels:
+    environment: production
+    project: eodi-me
+
+# ── Alertmanager ──────────────────────────────────────────────────────────────
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]
+
+rule_files:
+  - "rules/*.yml"
+
+# ── Scrape configurations ─────────────────────────────────────────────────────
+scrape_configs:
+  # EODI API server — Go runtime metrics exposed at /metrics
+  - job_name: eodi-api
+    static_configs:
+      - targets: ["api:8000"]
+        labels:
+          service: eodi-api
+    metrics_path: /metrics
+    scrape_interval: 15s
+    # Bearer token for protected /metrics endpoint (optional)
+    # authorization:
+    #   credentials_file: /etc/prometheus/api-token
+
+  # Prometheus self-monitoring
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # Node exporter — host OS metrics (add node-exporter service to docker-compose if needed)
+  # - job_name: node-exporter
+  #   static_configs:
+  #     - targets: ["node-exporter:9100"]
+  #       labels:
+  #         service: node-exporter
+
+  # PostgreSQL exporter (add postgres-exporter service if needed)
+  # - job_name: postgres
+  #   static_configs:
+  #     - targets: ["postgres-exporter:9187"]
+  #       labels:
+  #         service: postgres
+
+  # Redis exporter (add redis-exporter service if needed)
+  # - job_name: redis
+  #   static_configs:
+  #     - targets: ["redis-exporter:9121"]
+  #       labels:
+  #         service: redis

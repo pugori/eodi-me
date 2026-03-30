@@ -1,0 +1,59 @@
+# ============================================================================
+# eodi.me — Rust Engine: Docker Build
+#
+# Multi-stage build:
+#   Stage 1 (builder): Compile Rust release binary
+#   Stage 2 (runtime): Minimal Debian image — only the binary + curl for healthcheck
+#
+# Build: docker build -f Dockerfile.engine -t eodi-engine .
+# Run:   See docker-compose.engine.yml
+# ============================================================================
+
+# ── Stage 1: Rust builder ────────────────────────────────────────────────────
+FROM rust:1.80-slim AS builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    pkg-config libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+
+# Cache dependencies first
+COPY engine-server/Cargo.toml engine-server/Cargo.lock ./
+RUN mkdir -p src && echo 'fn main() {}' > src/main.rs \
+    && cargo build --release --manifest-path Cargo.toml 2>/dev/null || true \
+    && rm -rf src
+
+# Build the real binary
+COPY engine-server/ ./
+# The engine embeds the AES key at compile time via include_bytes!("../../secrets/edb.key")
+# Copy secrets into the builder stage so the relative path resolves correctly
+COPY secrets/ /secrets/
+RUN cargo build --release
+
+# ── Stage 2: Minimal runtime ─────────────────────────────────────────────────
+FROM debian:bookworm-slim AS runtime
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd -m -u 1000 -s /bin/sh appuser
+
+WORKDIR /app
+
+COPY --from=builder /build/target/release/eodi-engine /app/eodi-engine
+RUN chmod +x /app/eodi-engine
+
+# /data = read-only hex database mount point (hexagons.edbh)
+# /overlays = writable user overlay storage
+RUN mkdir -p /data /overlays && chown appuser:appuser /data /overlays
+
+USER appuser
+
+EXPOSE 7557
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -sf http://localhost:7557/health || exit 1
+
+ENTRYPOINT ["/app/eodi-engine"]
+CMD ["/data/hexagons.edbh", "--bind=0.0.0.0", "--port=7557"]

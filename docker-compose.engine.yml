@@ -1,0 +1,90 @@
+# ============================================================================
+# eodi.me — Rust Engine: Standalone Server Deployment
+#
+# Usage (Solo Biz+ self-hosted):
+#   1. Copy hexagons.edbh to ./data/hexagons.edbh
+#   2. Set API_KEY in .env (or export ENGINE_API_KEY=...)
+#   3. docker compose -f docker-compose.engine.yml up -d
+#   4. Access: http://your-server:7557/health
+#      Auth:   Authorization: Bearer <your-API_KEY>
+#
+# Online API access:
+#   - Port 7557 is exposed externally. Put Nginx/Caddy in front for HTTPS.
+#   - The engine binds to 0.0.0.0 in this mode — all clients on the network
+#     can reach it. The API key is the sole auth guard.
+#
+# Local-only (no external access):
+#   - Remove the ports mapping below, or bind to 127.0.0.1:7557
+# ============================================================================
+
+services:
+  engine:
+    image: eodi-engine:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.engine
+    container_name: eodi-engine
+    restart: unless-stopped
+    ports:
+      - "${ENGINE_PORT:-7557}:7557"
+    environment:
+      ENGINE_API_KEY: "${ENGINE_API_KEY:?ENGINE_API_KEY must be set — run: openssl rand -hex 32}"
+      ENGINE_PLAN: "${ENGINE_PLAN:-pro}"
+    volumes:
+      - ./data:/data:ro          # hexagons.edbh must be placed here
+      - engine-overlays:/overlays # user overlay data (writable)
+    command: >
+      /app/eodi-engine
+      /data/hexagons.edbh
+      --bind=0.0.0.0
+      --port=7557
+      --api-key=${ENGINE_API_KEY}
+      --plan=${ENGINE_PLAN:-pro}
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 3G
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:7557/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s    # allow time for VDB to load
+    networks:
+      - eodi-net
+
+  # Optional: Caddy reverse proxy for HTTPS (recommended for production)
+  caddy:
+    image: caddy:2-alpine
+    container_name: eodi-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: "${DOMAIN:?DOMAIN must be set — e.g. api.eodi.me}"
+    volumes:
+      - ./config/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - engine
+    networks:
+      - eodi-net
+    profiles:
+      - https   # only start when: docker compose --profile https up
+
+networks:
+  eodi-net:
+    driver: bridge
+
+volumes:
+  engine-overlays:
+    driver: local
+  caddy-data:
+    driver: local
+  caddy-config:
+    driver: local

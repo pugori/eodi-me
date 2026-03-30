@@ -1,0 +1,43 @@
+# EODI Collector Configuration
+# Copy this file to config.toml and modify as needed
+
+[database]
+# SQLite database file path
+file = "cities.db"
+
+[collection]
+# Path to cities15000.txt (GeoNames dataset)
+cities_file = "../cities15000.txt"
+
+# Maximum cities to process (0 = all)
+limit = 0
+
+# Resume from previous run
+resume = true
+
+# Validate and re-fetch if data is corrupted
+validate = true
+
+[workers]
+# Minimum concurrent workers
+min_workers = 2
+
+# Maximum concurrent workers
+max_workers = 16
+
+# Memory per worker in MB
+worker_memory_mb = 200
+
+[rate_limiting]
+# Minimum delay between requests to same domain (seconds)
+min_delay = 1.0
+
+# Maximum delay between requests to same domain (seconds)
+max_delay = 60.0
+
+[output]
+# Output directory for exports
+directory = "output"
+
+# State directory for resume functionality
+state_dir = "state"

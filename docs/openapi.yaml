@@ -1,0 +1,583 @@
+openapi: 3.1.0
+info:
+  title: eodi.me Engine API
+  version: "1.0"
+  description: |
+    Local HTTP API for the eodi.me City Vibe Engine.
+
+    **Desktop (local):** The engine binds to `127.0.0.1` on a random port.
+    The Tauri shell exposes the resolved base URL and a session token via the
+    Settings → Local API panel.
+
+    **Server / Docker mode:** Bind to `0.0.0.0:7557` with `--bind=0.0.0.0 --api-key=<hex>`.
+
+    ## Authentication
+    All endpoints require a `Bearer` token in the `Authorization` header.
+    Two token types are accepted:
+    - **Session token** — ephemeral, rotates on engine restart (desktop mode)
+    - **API key** — persistent hex string, stable across restarts (Business+)
+
+    ## Plan gates
+    Some endpoints require an active paid plan (`pro`).
+    Requests to gated endpoints with a `free` plan return **402 Payment Required**.
+  contact:
+    name: eodi.me Support
+    url: https://eodi.me
+    email: support@eodi.me
+  license:
+    name: Proprietary
+    url: https://eodi.me/terms.html
+  termsOfService: https://eodi.me/terms.html
+
+servers:
+  - url: http://localhost:{port}
+    description: Local desktop engine
+    variables:
+      port:
+        default: "39721"
+        description: Resolved dynamically; read from Settings → Local API
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: HEX
+
+  schemas:
+    HexDetail:
+      type: object
+      description: Full analysis result for a single H3 hexagon
+      properties:
+        h3_index:
+          type: string
+          example: "871e31b63ffffff"
+        score:
+          type: number
+          format: float
+          description: Overall composite vibe score (0–1)
+        radar:
+          type: object
+          additionalProperties:
+            type: number
+          description: Per-dimension scores (0–1)
+        dominant_vibe:
+          type: string
+          description: Name of the highest-scoring dimension
+        city:
+          type: string
+        country:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+
+    HexSummary:
+      type: object
+      properties:
+        h3_index:
+          type: string
+        score:
+          type: number
+        dominant_vibe:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+
+    BatchItem:
+      type: object
+      required: [h3_index]
+      properties:
+        h3_index:
+          type: string
+          example: "871e31b63ffffff"
+        include_vector:
+          type: boolean
+          default: false
+          description: Include raw 15D embedding vector
+
+    BatchResult:
+      type: object
+      properties:
+        h3_index:
+          type: string
+        radar:
+          type: object
+          additionalProperties:
+            type: number
+        vector:
+          type: array
+          items:
+            type: number
+          description: Present only when include_vector=true
+        error:
+          type: string
+          description: Present when h3_index not found in database
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+
+security:
+  - bearerAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Basic health check
+      security: []
+      tags: [System]
+      responses:
+        "200":
+          description: Engine is alive
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /engine/health:
+    get:
+      summary: Detailed engine health with load progress
+      tags: [System]
+      responses:
+        "200":
+          description: Engine health details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [loading, ready]
+                  load_progress:
+                    type: integer
+                    description: VDB load progress 0–100
+                  plan:
+                    type: string
+                    enum: [free, pro]
+                  hex_count:
+                    type: integer
+
+  /stats:
+    get:
+      summary: Database statistics
+      tags: [System]
+      responses:
+        "200":
+          description: Stats object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_hexagons:
+                    type: integer
+                  countries:
+                    type: integer
+                  cities:
+                    type: integer
+
+  /search:
+    get:
+      summary: Search hexagons by text query
+      tags: [Search]
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "Seongsu-dong"
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+            maximum: 50
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HexSummary"
+
+  /hex/search:
+    get:
+      summary: Alias for /search
+      tags: [Search]
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HexSummary"
+
+  /hex/match:
+    get:
+      summary: Similarity search — find hexagons similar to a query hex
+      tags: [Search]
+      parameters:
+        - name: h3
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "871e31b63ffffff"
+        - name: k
+          in: query
+          schema:
+            type: integer
+            default: 5
+            maximum: 20
+          description: Number of similar results to return
+      responses:
+        "200":
+          description: Similar hexagons ranked by similarity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: "#/components/schemas/HexSummary"
+                    - type: object
+                      properties:
+                        similarity:
+                          type: number
+                          description: Similarity score 0–1
+
+  /hex/viewport:
+    get:
+      summary: List hexagons within a lat/lng bounding box
+      tags: [Search]
+      parameters:
+        - name: min_lat
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: max_lat
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: min_lng
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: max_lng
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 200
+      responses:
+        "200":
+          description: Hexagons in viewport
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HexSummary"
+
+  /hex/discover:
+    get:
+      summary: Preference-based discovery — find hexes matching a weight profile
+      tags: [Search]
+      parameters:
+        - name: weights
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON object mapping dimension names to weights 0–1
+          example: '{"vitality":0.8,"culture":0.6}'
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Top matching hexagons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HexSummary"
+
+  /hex/nearest:
+    get:
+      summary: Find the nearest hexagon to a lat/lng point
+      tags: [Search]
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: lng
+          in: query
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Nearest hex
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HexDetail"
+        "404":
+          description: No hex found nearby
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /hex/{h3}:
+    get:
+      summary: Get full detail for a specific H3 index
+      tags: [Hex]
+      parameters:
+        - name: h3
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "871e31b63ffffff"
+      responses:
+        "200":
+          description: Hex detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HexDetail"
+        "404":
+          description: Hex not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /batch/analyze:
+    post:
+      summary: Batch analyze up to 100 hexagons in a single request
+      tags: [Batch]
+      description: |
+        **Requires Business plan or above.**
+        Returns a radar score for each requested H3 index.
+        Unknown indices return `{"h3_index": "...", "error": "not_found"}`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items]
+              properties:
+                items:
+                  type: array
+                  maxItems: 100
+                  items:
+                    $ref: "#/components/schemas/BatchItem"
+            example:
+              items:
+                - h3_index: "871e31b63ffffff"
+                - h3_index: "871e31b60ffffff"
+                  include_vector: true
+      responses:
+        "200":
+          description: Batch results (partial results on partial not-found)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BatchResult"
+        "400":
+          description: Invalid request (empty items or over 100)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "402":
+          description: Plan upgrade required (not Business+)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Rate limit exceeded
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+                example: 1
+
+  /countries:
+    get:
+      summary: List all available countries
+      tags: [Reference]
+      responses:
+        "200":
+          description: Country list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /cities:
+    get:
+      summary: List cities, optionally filtered by country
+      tags: [Reference]
+      parameters:
+        - name: country
+          in: query
+          schema:
+            type: string
+          description: ISO country code or name filter
+      responses:
+        "200":
+          description: City list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /user/hex/{h3}:
+    get:
+      summary: Get user overlay data for a hex
+      tags: [UserOverlay]
+      parameters:
+        - name: h3
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User overlay entry
+          content:
+            application/json:
+              schema:
+                type: object
+        "404":
+          description: No overlay for this hex
+
+    put:
+      summary: Set user overlay data for a hex
+      tags: [UserOverlay]
+      parameters:
+        - name: h3
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Arbitrary JSON payload stored per-hex
+      responses:
+        "200":
+          description: Stored successfully
+
+    delete:
+      summary: Delete user overlay data for a hex
+      tags: [UserOverlay]
+      parameters:
+        - name: h3
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  /user/hexagons/bulk:
+    post:
+      summary: Bulk set user overlay data for multiple hexes
+      tags: [UserOverlay]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: object
+              description: Map of h3_index → overlay payload
+      responses:
+        "200":
+          description: Bulk update result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updated:
+                    type: integer
+
+  /user/hexagons:
+    get:
+      summary: List all user overlay entries
+      tags: [UserOverlay]
+      responses:
+        "200":
+          description: All user overlays
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+
+  /user/clear:
+    delete:
+      summary: Clear all user overlay data
+      tags: [UserOverlay]
+      responses:
+        "204":
+          description: All user overlays cleared

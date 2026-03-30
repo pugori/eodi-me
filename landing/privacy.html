@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy · eodi.me</title>
+  <meta name="description" content="eodi.me Privacy Policy — how we handle your data." />
+  <link rel="canonical" href="https://eodi.me/privacy" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0d0f14;
+      --surface: #161a22;
+      --border:  #232838;
+      --text1:   #e8eaf0;
+      --text2:   #9ba3b8;
+      --text3:   #5c6478;
+      --accent:  #6c8cff;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text1);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px clamp(16px, 5vw, 80px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 100;
+    }
+    .logo { font-weight: 700; font-size: 18px; color: var(--text1); text-decoration: none; }
+    .nav-links a { color: var(--text2); text-decoration: none; font-size: 14px; }
+    .nav-links a:hover { color: var(--text1); }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: clamp(40px, 8vw, 80px) clamp(16px, 5vw, 40px);
+    }
+
+    h1 { font-size: clamp(24px, 4vw, 36px); font-weight: 700; margin-bottom: 8px; }
+    .meta { color: var(--text3); font-size: 13px; margin-bottom: 48px; }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-top: 40px;
+      margin-bottom: 12px;
+      color: var(--text1);
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    p { margin-bottom: 14px; color: var(--text2); }
+    ul { margin: 0 0 14px 20px; }
+    ul li { color: var(--text2); margin-bottom: 6px; }
+    strong { color: var(--text1); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .highlight-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 24px 0;
+    }
+    .highlight-box p { margin: 0; }
+
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      border-top: 1px solid var(--border);
+      color: var(--text3);
+      font-size: 13px;
+      margin-top: 80px;
+    }
+    footer a { color: var(--text2); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">eodi.me</a>
+  <div class="nav-links">
+    <a href="/">← Back to Home</a>
+  </div>
+</nav>
+
+<main>
+  <h1>Privacy Policy</h1>
+  <p class="meta">Effective date: March 2026 &nbsp;·&nbsp; Last updated: March 2026</p>
+
+  <div class="highlight-box">
+    <p><strong>TL;DR:</strong> eodi.me is an offline-first desktop application. Your analysis data, map interactions, and custom overlays stay on your device. We only receive data necessary for license activation and subscription management — and we never sell it.</p>
+  </div>
+
+  <h2>1. Who We Are</h2>
+  <p>eodi.me ("we", "our", or "us") is a software product that provides offline neighborhood analysis tools. Contact us at <a href="mailto:hello@eodi.me">hello@eodi.me</a> for any privacy-related inquiries.</p>
+
+  <h2>2. Data We Do NOT Collect</h2>
+  <p>By design, the following data never leaves your device:</p>
+  <ul>
+    <li>Your location, search queries, or map interactions within the app</li>
+    <li>Neighborhood analysis results or vibe scores you view</li>
+    <li>Custom POI overlays or annotations you create</li>
+    <li>The hexagon vector database (stored and decrypted locally)</li>
+    <li>Any usage analytics, telemetry, or crash reports</li>
+  </ul>
+  <p>eodi.me includes <strong>no analytics SDKs, no tracking pixels, and no third-party data collection</strong> of any kind.</p>
+
+  <h2>3. Data We Do Collect</h2>
+
+  <h2 style="border: none; padding: 0; font-size: 15px; margin-top: 20px; margin-bottom: 8px;">3.1 License Activation</h2>
+  <p>When you activate a license key, we transmit the following to <strong>LemonSqueezy</strong> (our payment and licensing processor) to validate your purchase:</p>
+  <ul>
+    <li>Your license key</li>
+    <li>A machine-specific activation identifier (a random ID generated at install — not tied to hardware fingerprinting)</li>
+  </ul>
+  <p>This is required to enforce per-seat licensing and prevent unauthorized sharing. LemonSqueezy's privacy policy is available at <a href="https://www.lemonsqueezy.com/privacy" target="_blank" rel="noopener">lemonsqueezy.com/privacy</a>.</p>
+
+  <h2 style="border: none; padding: 0; font-size: 15px; margin-top: 20px; margin-bottom: 8px;">3.2 Payment Information</h2>
+  <p>All payment processing is handled by <strong>LemonSqueezy</strong>. We do not receive, store, or process credit card numbers or other payment details. LemonSqueezy is PCI DSS compliant.</p>
+
+  <h2 style="border: none; padding: 0; font-size: 15px; margin-top: 20px; margin-bottom: 8px;">3.3 Subscription Records</h2>
+  <p>Your email address and subscription status (plan tier, billing period, expiry date) are stored in our database when you purchase a license. This is necessary to:</p>
+  <ul>
+    <li>Fulfill your subscription</li>
+    <li>Send transactional emails (purchase confirmations, renewal reminders)</li>
+    <li>Provide customer support</li>
+  </ul>
+
+  <h2 style="border: none; padding: 0; font-size: 15px; margin-top: 20px; margin-bottom: 8px;">3.4 Support Communications</h2>
+  <p>If you contact us via email, we retain your email address and the content of your message to respond to and resolve your inquiry.</p>
+
+  <h2>4. Self-Hosted (Docker) Deployments</h2>
+  <p>If you run eodi.me in self-hosted Docker mode (Business/Enterprise plan), the engine runs entirely on your own infrastructure. We have no access to your deployment, queries, or data in this mode. The API key authentication is generated locally on your hardware.</p>
+
+  <h2>5. Data Retention</h2>
+  <ul>
+    <li><strong>Subscription records:</strong> Retained while your subscription is active and for 90 days after cancellation, then deleted.</li>
+    <li><strong>Support emails:</strong> Retained for 12 months, then deleted.</li>
+    <li><strong>Local app data:</strong> Stored indefinitely on your device until you uninstall the app or manually delete the data directory (<code>%APPDATA%\eodi.me</code> on Windows, <code>~/Library/Application Support/eodi.me</code> on macOS).</li>
+  </ul>
+
+  <h2>6. Your Rights</h2>
+  <p>Depending on your jurisdiction, you may have the right to:</p>
+  <ul>
+    <li><strong>Access:</strong> Request a copy of the personal data we hold about you</li>
+    <li><strong>Deletion:</strong> Request deletion of your subscription records and email</li>
+    <li><strong>Correction:</strong> Request correction of inaccurate data</li>
+    <li><strong>Portability:</strong> Request your data in a structured, machine-readable format</li>
+    <li><strong>Opt-out:</strong> Withdraw consent for any optional processing</li>
+  </ul>
+  <p>To exercise any of these rights, email <a href="mailto:hello@eodi.me">hello@eodi.me</a>. We will respond within 30 days.</p>
+
+  <h2>7. Cookies and Tracking</h2>
+  <p>The eodi.me desktop application does not use cookies. The <strong>eodi.me website</strong> (this landing page) does not use analytics cookies or third-party tracking. No cookie consent banner is required because we do not set tracking cookies.</p>
+
+  <h2>8. Third-Party Services</h2>
+  <ul>
+    <li><strong>LemonSqueezy:</strong> Payment and license management — <a href="https://www.lemonsqueezy.com/privacy" target="_blank" rel="noopener">Privacy Policy</a></li>
+    <li><strong>OpenStreetMap:</strong> Map tile data — <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener">Privacy Policy</a> (tiles are fetched anonymously)</li>
+    <li><strong>Supabase:</strong> Subscription database hosting — <a href="https://supabase.com/privacy" target="_blank" rel="noopener">Privacy Policy</a></li>
+  </ul>
+
+  <h2>9. Data Security</h2>
+  <p>Local data is protected by:</p>
+  <ul>
+    <li>AES-256-GCM encryption of the hexagon vector database (requires your password to decrypt)</li>
+    <li>HMAC-SHA256 integrity verification of license files</li>
+    <li>The engine server binds only to <code>127.0.0.1</code> (localhost) by default — inaccessible from the network</li>
+  </ul>
+  <p>Subscription data in transit is protected by TLS 1.2+. We apply industry-standard security practices to our backend infrastructure.</p>
+
+  <h2>10. Children's Privacy</h2>
+  <p>eodi.me is not directed at children under 13. We do not knowingly collect personal data from children. If you believe a child has provided us data, please contact <a href="mailto:hello@eodi.me">hello@eodi.me</a>.</p>
+
+  <h2>11. Changes to This Policy</h2>
+  <p>We may update this policy to reflect changes in our practices or applicable law. We will notify active subscribers of material changes via email at least 14 days before they take effect. The "Last updated" date at the top reflects the most recent revision.</p>
+
+  <h2>12. Korean Users — 개인정보보호법 (PIPA)</h2>
+  <p>eodi.me complies with the Republic of Korea's Personal Information Protection Act (PIPA, 개인정보보호법). For users in South Korea:</p>
+  <ul>
+    <li><strong>수집 항목 (Data Collected):</strong> 라이선스 활성화를 위한 이메일 주소 및 라이선스 키, 구독 플랜 정보</li>
+    <li><strong>수집 목적 (Purpose):</strong> 서비스 이용 계약 이행, 구독 관리, 고객 지원</li>
+    <li><strong>보유 기간 (Retention):</strong> 구독 종료 후 90일 이내 삭제. 법령에 따라 보관이 필요한 경우 해당 기간 동안 보관.</li>
+    <li><strong>제3자 제공 (Third Parties):</strong> LemonSqueezy (결제 처리), Supabase (구독 데이터베이스). 그 외 제3자에게 개인정보를 제공하지 않습니다.</li>
+    <li><strong>이용자 권리 (Your Rights):</strong> 개인정보 열람, 정정, 삭제, 처리 정지 요청 권리가 있습니다. <a href="mailto:hello@eodi.me">hello@eodi.me</a>로 요청하시면 30일 이내에 처리합니다.</li>
+    <li><strong>개인정보보호 담당자 (Privacy Officer):</strong> <a href="mailto:hello@eodi.me">hello@eodi.me</a></li>
+  </ul>
+  <p>앱 내에서 분석하는 모든 데이터(검색 기록, 북마크, 맞춤 장소 등)는 사용자 기기에만 저장되며 서버로 전송되지 않습니다.</p>
+
+  <h2>13. Contact</h2>
+  <p>For privacy questions, requests, or concerns: <a href="mailto:hello@eodi.me">hello@eodi.me</a></p>
+</main>
+
+<footer>
+  <p>
+    <a href="/">Home</a> &nbsp;·&nbsp;
+    <a href="/privacy">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="/terms">Terms of Service</a> &nbsp;·&nbsp;
+    <a href="mailto:hello@eodi.me">Support</a>
+  </p>
+  <p style="margin-top: 8px;">© 2026 eodi.me</p>
+</footer>
+
+</body>
+</html>

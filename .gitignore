@@ -1,0 +1,76 @@
+__pycache__/
+*.pyc
+.venv/
+.vscode/
+data/
+*.npz
+
+# Design review screenshots (dev-only, never commit)
+.design-review/
+z_*.png
+ss_*.png
+cap_*.png
+sc_*.png
+debug_dump.html
+# Temp window-capture scripts & output
+cap_all.ps1
+click_app.ps1
+click_tabs.ps1
+enum_wins.ps1
+all_windows.txt
+click_result.txt
+rect.txt
+cc_list.txt
+
+# Dependencies & build outputs
+**/node_modules/
+**/target/
+**/dist/
+**/.vite/
+**/.ruff_cache/
+**/.next/
+**/.nuxt/
+
+# Large binary / generated files
+*.ckpt
+*.edb
+*.edbh
+*.db
+*.faiss
+*.enc
+*.exe
+*.hex_poi_ckpt
+*.poi_ckpt
+*.poi_ckpt.ts
+cities*.txt
+
+# Output artifacts
+output/
+artifacts/
+
+# Build remnants
+src/tauri-shell/dist/
+
+# Runtime state and logs
+logs/
+state/
+*.log
+*.tmp
+
+# Generated config (created by `eodi-collector init`)
+rust-collector/config.toml
+
+# Secrets / keys — NEVER commit these
+secrets/
+
+# Local dev overrides
+tauri-shell/.env.local
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
