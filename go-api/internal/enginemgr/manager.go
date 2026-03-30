@@ -57,7 +57,44 @@ func NewManager(logger *zap.Logger) *Manager {
 
 // Start extracts the engine binary, launches it with the given .edbh path,
 // and waits for the ENGINE_READY signal on stdout.
+//
+// If ENGINE_URL and ENGINE_TOKEN environment variables are set, connects to
+// an external engine instance instead of starting an embedded binary.
 func (m *Manager) Start(hexdbPath string) error {
+	// Support external engine via environment variables (Docker / dev mode)
+	if extURL := os.Getenv("ENGINE_URL"); extURL != "" {
+		extToken := os.Getenv("ENGINE_TOKEN")
+		if extToken == "" {
+			extToken = "devtoken"
+		}
+		// Parse port from URL
+		var extPort int
+		fmt.Sscanf(extURL, "http://127.0.0.1:%d", &extPort)
+		if extPort == 0 {
+			fmt.Sscanf(extURL, "http://localhost:%d", &extPort)
+		}
+		if extPort == 0 {
+			// Try generic URL format
+			parts := strings.Split(extURL, ":")
+			if len(parts) >= 3 {
+				fmt.Sscanf(parts[2], "%d", &extPort)
+			}
+		}
+		if extPort == 0 {
+			extPort = 7557
+		}
+		m.mu.Lock()
+		m.port = extPort
+		m.token = extToken
+		m.ready = true
+		m.mu.Unlock()
+		m.logger.Info("Connected to external engine",
+			zap.String("url", extURL),
+			zap.Int("port", extPort),
+		)
+		return nil
+	}
+
 	if !engine.HasEmbeddedEngine() {
 		return fmt.Errorf("no embedded engine binary")
 	}

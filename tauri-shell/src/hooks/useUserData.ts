@@ -117,7 +117,11 @@ function saveUserData(data: UserData) {
 }
 
 // ── Calculate weighted suitability score ─────────────────────────────────────
-// Entirely client-side — no DB modifications
+// Entirely client-side — no DB modifications.
+// Radar values are category proportions summing to ~1.0, so the raw weighted
+// average with equal weights is ~1/6 ≈ 0.17 — unintuitive as a percentage.
+// We rescale by 4× (capped at 1.0) so typical balanced areas score ~70-80%
+// while areas mismatched with user preferences score lower.
 export function computeSuitability(
   radar: Record<string, number> | undefined,
   weights: VibeWeights,
@@ -131,7 +135,8 @@ export function computeSuitability(
     totalWeight += w;
     totalScore += w * v;
   }
-  return totalWeight > 0 ? totalScore / totalWeight : 0.5;
+  const raw = totalWeight > 0 ? totalScore / totalWeight : 0.5;
+  return Math.min(1.0, raw * 4);
 }
 
 // ── Hook ─────────────────────────────────────────────────────────────────────

@@ -315,10 +315,8 @@ const ResultCard = React.memo(function ResultCard({ city, idx, total = 1, isActi
   }, [city.radar]);
 
   const scoreColorHex = scoreColor(scoreP);
-  // Rank-based grade: distributes grades across the result set
-  // Top 10% = A+, 10-25% = A, 25-45% = B+, 45-65% = B, 65-80% = C, else D
-  const rankPct = total > 1 ? idx / total : 0;
-  const gradeLabel = rankPct < 0.10 ? 'A+' : rankPct < 0.25 ? 'A' : rankPct < 0.45 ? 'B+' : rankPct < 0.65 ? 'B' : rankPct < 0.80 ? 'C' : 'D';
+  // Score-based grade: reflects absolute suitability match quality
+  const gradeLabel = scoreP >= 85 ? 'A+' : scoreP >= 72 ? 'A' : scoreP >= 60 ? 'B+' : scoreP >= 48 ? 'B' : scoreP >= 35 ? 'C' : 'D';
 
   // Rank badge — Apple-style: subtle numbered badge, top 3 with light gold/silver/bronze tint
   const rankBadge = (() => {

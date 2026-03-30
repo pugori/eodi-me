@@ -93,7 +93,7 @@ export function useViewportHexes(
           (h: any, idx: number) => ({
             id: h.h3_index || `v-${idx}`,
             city_id: h.h3_index,
-            name: h.admin_name || h.city || 'Unknown',
+            name: h.city || h.admin_name || 'Unknown',
             city: h.city,
             parent_city_name: h.city,
             country: h.country,

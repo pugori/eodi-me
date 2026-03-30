@@ -6,6 +6,25 @@
  */
 import type { HexResult } from '../hooks/useEngine';
 
+// ── Script detection ────────────────────────────────────────────────────────
+
+/**
+ * Returns true if the string is primarily in non-Latin script
+ * (Arabic, Devanagari, Thai, CJK, etc.) and would be unreadable
+ * to users expecting romanized names.
+ *
+ * Korean (Hangul) is excluded because it is handled separately.
+ */
+function isNonLatinScript(s: string): boolean {
+  if (!s) return false;
+  // Strip whitespace, digits, punctuation — check remaining chars
+  const letters = s.replace(/[\s\d\p{P}\p{S}]/gu, '');
+  if (!letters) return false;
+  // Match common non-Latin blocks (excluding Hangul U+AC00-U+D7AF, U+1100-U+11FF)
+  const nonLatin = letters.replace(/[\u0000-\u024F\u1E00-\u1EFF\uAC00-\uD7AF\u1100-\u11FF]/g, '');
+  return nonLatin.length / letters.length > 0.3;
+}
+
 // ── Name resolution ──────────────────────────────────────────────────────────
 
 /** Extract the best locality key for grouping (admin_name preferred, fallback to name). */
@@ -17,6 +36,10 @@ export function getLocalityKey(hex: Pick<HexResult, 'admin_name' | 'name'>): str
  * Resolve a human-readable locality label from hex metadata.
  * 항상 동네(admin_name)를 우선 사용.
  * admin_name이 도/시급인 경우에만 parent_city로 대체.
+ *
+ * For non-Korean locales: if admin_name is in non-Latin script and a Latin
+ * city name is available, prefer the city name with the native admin_name
+ * as a secondary detail (e.g. "Dubai · الحبية 3").
  */
 export function resolveLocalityName(hex: HexResult | null): string {
   if (!hex) return '—';
@@ -36,7 +59,12 @@ export function resolveLocalityName(hex: HexResult | null): string {
     if (country === 'KR') return adminName || parentCity || 'Unknown';
   }
 
-  // 전 세계: admin_name이 있으면 무조건 동네명으로 사용
+  // Non-Korean: if admin_name is in non-Latin script, use the Latin city name only.
+  // The suffix system (#1, #2) provides disambiguation.
+  if (adminName && isNonLatinScript(adminName) && parentCity && !isNonLatinScript(parentCity)) {
+    return parentCity;
+  }
+
   if (adminName) return adminName;
   return parentCity || 'Unknown';
 }
@@ -116,7 +144,10 @@ export function placeLabel(hex: HexResult, suffix: number | string = ''): string
   const country = hex.country || '';
 
   // Subtitle shows breadcrumb context only — suffix stays in the card title
-  const showParent = resolvedLocality.toLowerCase() !== parentCity.toLowerCase() ? parentCity : '';
+  // If the resolved locality already contains the parent city (e.g. "Dubai · الحبية 3"),
+  // don't repeat the city in the breadcrumb.
+  const localityContainsParent = parentCity && resolvedLocality.toLowerCase().includes(parentCity.toLowerCase());
+  const showParent = parentCity && !localityContainsParent && resolvedLocality.toLowerCase() !== parentCity.toLowerCase() ? parentCity : '';
   const parts = [resolvedLocality, showParent, country]
     .map(v => (v || '').trim())
     .filter(Boolean);

@@ -13,6 +13,9 @@
 import React, { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+// Use pre-built CSP worker to avoid esbuild __publicField errors in Vite worker context
+import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-csp-worker?url';
+maplibregl.setWorkerUrl(maplibreWorkerUrl);
 import { isValidCell, cellToBoundary } from 'h3-js';
 import type { ViewportBounds } from '../../hooks/useViewportHexes';
 import type { VibeWeights } from '../../hooks/useUserData';
@@ -217,7 +220,8 @@ function getFillRgba(
   if (analysisMode === 'suitability' && weights && d.radar) {
     const suit = computeSuitability(d.radar, weights);
     const [r, g, b] = suitabilityColor(suit);
-    const suitAlpha = isSelected ? 220 : Math.round((0.40 + suit * 0.38) * 255);
+    const hexVar = d.id ? (parseInt(String(d.id).slice(-4), 16) || 0) % 30 - 15 : 0;
+    const suitAlpha = isSelected ? 220 : Math.min(255, Math.max(80, Math.round((0.40 + suit * 0.38) * 255) + hexVar));
     return [r, g, b, suitAlpha];
   }
 
@@ -236,9 +240,11 @@ function getFillRgba(
     // Raised from 0.18/0.12/0.08 → 0.48/0.22/0.12 for strong category tinting on CARTO Dark Matter.
     // CARTO dark background (#0e0e0e) allows higher hex opacity without blocking map context.
     // Benchmark: Foursquare Studio uses 60-80% alpha for hex data layers.
+    // Deterministic per-hex variation to break visual monotony when all data is uniform
+    const hexVariation = d.id ? (parseInt(String(d.id).slice(-4), 16) || 0) % 40 - 20 : 0;
     const browseAlpha = isSelected
       ? 210
-      : Math.round((0.48 + intensity * 0.22 + dominance * 0.12) * 255);
+      : Math.min(255, Math.max(80, Math.round((0.48 + intensity * 0.22 + dominance * 0.12) * 255) + hexVariation));
     const col = (key && VIBE_CATEGORY_COLORS[key]) ? VIBE_CATEGORY_COLORS[key] : NEUTRAL_COLOR;
     const [r, g, b] = hexCssToRgb(col.fill);
     return [r, g, b, browseAlpha];
@@ -253,13 +259,10 @@ function getFillRgba(
 }
 
 function getLineRgba(_d: HexDatum, isSelected: boolean, isSearch: boolean, analysisMode?: string): RGBA {
-  if (isSelected) return [255, 255, 255, 210];      // bright selection ring
-  if (analysisMode === 'suitability') return [255, 255, 255, 65];   // subtle in score mode
-  if (isSearch) return [255, 255, 255, 95];          // search: clear hex grid
-  return [255, 255, 255, 90];                        // browse: visible grid lines
-  // Alpha raised from 72→90 (browse) and 80→95 (search) for clearer H3 cell boundaries.
-  // ESRI Business Analyst benchmark: 60-80% alpha for hex boundaries.
-  // ISO 9241-307: minimum 30% contrast ratio for spatial boundaries.
+  if (isSelected) return [255, 255, 255, 200];      // bright selection ring
+  if (analysisMode === 'suitability') return [255, 255, 255, 35];   // very subtle in score mode
+  if (isSearch) return [255, 255, 255, 50];          // search: subtle hex grid
+  return [255, 255, 255, 45];                        // browse: minimal grid lines
 }
 
 // ── H3 index normalisation ────────────────────────────────────────────────────

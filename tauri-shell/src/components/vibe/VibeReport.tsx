@@ -239,24 +239,24 @@ const MarketSignalsPanel = ({ signals, locale }: { signals: HexSignals; locale: 
 
 function scoreGrade(v: number, locale: string): { label: string; emoji: string } {
   if (locale === 'ko') {
-    if (v >= 88) return { label: '최상', emoji: '🟢' };
+    if (v >= 85) return { label: '최상', emoji: '🟢' };
     if (v >= 72) return { label: '우수', emoji: '🟢' };
-    if (v >= 55) return { label: '양호', emoji: '🟡' };
-    if (v >= 40) return { label: '보통', emoji: '🟠' };
-    if (v >= 25) return { label: '낮음', emoji: '🔴' };
+    if (v >= 60) return { label: '양호', emoji: '🟡' };
+    if (v >= 48) return { label: '보통', emoji: '🟠' };
+    if (v >= 35) return { label: '낮음', emoji: '🔴' };
     return { label: '미흡', emoji: '⚫' };
   }
   if (locale === 'ja') {
-    if (v >= 88) return { label: '最高', emoji: '🟢' };
+    if (v >= 85) return { label: '最高', emoji: '🟢' };
     if (v >= 72) return { label: '優良', emoji: '🟢' };
-    if (v >= 55) return { label: '良好', emoji: '🟡' };
-    if (v >= 40) return { label: '普通', emoji: '🟠' };
-    if (v >= 25) return { label: '低め', emoji: '🔴' };
+    if (v >= 60) return { label: '良好', emoji: '🟡' };
+    if (v >= 48) return { label: '普通', emoji: '🟠' };
+    if (v >= 35) return { label: '低め', emoji: '🔴' };
     return { label: '不足', emoji: '⚫' };
   }
-  if (v >= 88) return { label: 'Excellent', emoji: '🟢' };
+  if (v >= 85) return { label: 'Excellent', emoji: '🟢' };
   if (v >= 72) return { label: 'Good', emoji: '🟢' };
-  if (v >= 55) return { label: 'Fair', emoji: '🟡' };
+  if (v >= 60) return { label: 'Fair', emoji: '🟡' };
   if (v >= 40) return { label: 'Average', emoji: '🟠' };
   if (v >= 25) return { label: 'Low', emoji: '🔴' };
   return { label: 'Sparse', emoji: '⚫' };

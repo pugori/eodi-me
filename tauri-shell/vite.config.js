@@ -71,42 +71,42 @@ export default defineConfig({
     // Start engine with: engine-server\target\release\eodi-engine.exe output\hexagons.edbh devtoken --port=17384
     proxy: {
       '/hex': {
-        target: 'http://127.0.0.1:17384',
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         secure: false,
       },
       '/health': {
-        target: 'http://127.0.0.1:17384',
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         secure: false,
       },
       '/engine/health': {
-        target: 'http://127.0.0.1:17384',
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         secure: false,
       },
       '/stats': {
-        target: 'http://127.0.0.1:17384',
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         secure: false,
       },
       '/countries': {
-        target: 'http://127.0.0.1:17384',
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         secure: false,
       },
       '/cities': {
-        target: 'http://127.0.0.1:17384',
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         secure: false,
       },
       '/user': {
-        target: 'http://127.0.0.1:17384',
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         secure: false,
       },
       '/_hb': {
-        target: 'http://127.0.0.1:17384',
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         secure: false,
       },

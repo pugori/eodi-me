@@ -403,15 +403,26 @@ export default function App() {
         if (h.score > max) max = h.score;
       }
       const range = max - min;
-      if (range < 0.001) return hexes; // all identical — skip normalization
+      if (range < 0.10) return hexes; // skip normalization when scores are too similar
       return hexes.map(h => ({ ...h, score: floor + ((h.score - min) / range) * (1 - floor) }));
     };
 
     if (isSearchMode && searchResults.length > 0) {
       const scored = applyScore(searchResults);
-      const sorted = [...scored].sort((a, b) => b.score - a.score);
-      const normalized = normalizeScores(sorted); // normalize for meaningful grade distribution
-      return { displayedHexes: normalized, searchResultsTruncated: false };
+      // Sort: city name matching the query sorts first, then by suitability score.
+      // This ensures "Dubai" results rank above nearby cities like Ḩattā.
+      const q = query.trim().toLowerCase();
+      const sorted = [...scored].sort((a, b) => {
+        if (q) {
+          const aMatch = (a.city || '').toLowerCase().includes(q) ||
+                         (a.parent_city_name || '').toLowerCase().includes(q) ? 1 : 0;
+          const bMatch = (b.city || '').toLowerCase().includes(q) ||
+                         (b.parent_city_name || '').toLowerCase().includes(q) ? 1 : 0;
+          if (aMatch !== bMatch) return bMatch - aMatch;
+        }
+        return b.score - a.score;
+      });
+      return { displayedHexes: sorted, searchResultsTruncated: false };
     }
     if (!isSearchMode && viewportHexes.length > 0) {
       const scored = applyScore(viewportHexes);
