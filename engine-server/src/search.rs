@@ -623,7 +623,7 @@ impl HexIndex {
             })
             .collect();
 
-        if in_bbox.len() <= limit {
+        if in_bbox.is_empty() || in_bbox.len() <= limit {
             return in_bbox;
         }
 

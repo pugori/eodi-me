@@ -150,7 +150,10 @@ impl Plan {
         // Verify HMAC
         let payload = format!("{}:{}", plan_str, ts_minute);
         let key = plan_token_key();
-        let mut mac = HmacSha256::new_from_slice(&key).expect("key");
+        let Ok(mut mac) = HmacSha256::new_from_slice(&key) else {
+            tracing::error!("Invalid HMAC key length — falling back to Free plan");
+            return Plan::Free;
+        };
         mac.update(payload.as_bytes());
         let expected_sig = B64.encode(mac.finalize().into_bytes());
 

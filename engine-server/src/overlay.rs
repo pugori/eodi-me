@@ -153,7 +153,10 @@ impl UserOverlayStore {
                 .collect(),
         };
         let json = serde_json::to_string_pretty(&file)?;
-        std::fs::write(&self.file_path, json)?;
+        // Atomic write: write to temp file, then rename
+        let tmp_path = self.file_path.with_extension("tmp");
+        std::fs::write(&tmp_path, &json)?;
+        std::fs::rename(&tmp_path, &self.file_path)?;
         tracing::debug!("Persisted {} overlays to {}", data.len(), self.file_path.display());
         Ok(())
     }

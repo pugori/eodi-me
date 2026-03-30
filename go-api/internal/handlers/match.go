@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"math"
 	"net/http"
 	"strings"
 
@@ -46,7 +47,13 @@ func FindMatches(db *database.DB, logger *zap.Logger) gin.HandlerFunc {
 				c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Vector must be %d-dimensional", vibeVectorDim)})
 				return
 			}
-			queryVector = req.Vector
+			// Reject NaN/Inf values that would corrupt distance calculations
+			for i, v := range queryVector {
+				if math.IsNaN(float64(v)) || math.IsInf(float64(v), 0) {
+					c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Vector element [%d] contains invalid value (NaN/Inf)", i)})
+					return
+				}
+			}
 
 		} else if req.CityID != nil {
 			// Get vector by city ID
